@@ -1,0 +1,16 @@
+export const objectKeysOfContract: string[] = [
+	"number",
+	"date",
+	"subjectOfContract",
+	"valueOfContract",
+	"paymentAdvance",
+	"restOfPayment",
+	"transport",
+	"installation",
+	"paymentMethod",
+	"deliveryTime",
+	"content",
+	"invoice",
+	"addedBy",
+	"editedBy",
+];

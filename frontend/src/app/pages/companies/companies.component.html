@@ -1,0 +1,20 @@
+<section class="companies-container">
+  <ng-container *ngIf="!isLoading; else loading">
+    <h2>Lista de societati</h2>
+    <app-mat-table-company
+      *ngIf="companiesPagination?.data; else loading"
+      [companiesPagination]="companiesPagination"
+      (sendFilters)="requestCompanies($event)"
+    ></app-mat-table-company>
+  </ng-container>
+</section>
+
+<ng-template #loading>
+  <div class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>
+
+<ng-template #notActivated>
+  <td class="text-danger">Inactiv</td>
+</ng-template>

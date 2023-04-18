@@ -1,0 +1,50 @@
+/* You can add global styles to this file, and also import other style files */
+@use "styles/index.scss" as styles;
+@import "./../node_modules/quill/dist/quill.core.css";
+@import "./../node_modules/quill/dist/quill.snow.css";
+@import "./../node_modules/quill/dist/quill.bubble.css";
+
+* {
+  margin: 0;
+  padding: 0;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.spinner-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.border-red {
+  border: 1px solid styles.$borderRed;
+}
+
+.dialog-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: -24px -24px 0px -24px;
+  padding: 10px;
+  background-color: styles.$primary;
+  color: styles.$white;
+  cursor: move;
+}
+
+#model-contract-pdf-container {
+  display: none;
+}
+
+@media print {
+  .left-side {
+    display: none;
+  }
+}

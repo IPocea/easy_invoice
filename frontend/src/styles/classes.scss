@@ -1,0 +1,111 @@
+.mat-snack-bar-container {
+  text-align: center;
+  &.info {
+    color: $infoColor;
+    background-color: $infoBackGround;
+    border: 2px solid $infoBorder;
+  }
+  &.error {
+    color: $errorColor;
+    background-color: $errorBackground;
+    border: 2px solid $errorBorder;
+  }
+}
+
+.mat-simple-snackbar {
+  display: inline-block !important;
+}
+
+.mat-table {
+  background-color: $tenary;
+}
+
+.mat-cell,
+.mat-header-cell {
+  color: $textColor;
+  background-color: $tenary;
+}
+.mat-cell {
+  small {
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+  }
+}
+.mat-cell:hover {
+  background-color: $trHover;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.mat-input-element,
+.mat-form-field.mat-focused .mat-form-field-label {
+  color: $textColor;
+  caret-color: $textColor;
+}
+
+// start side-nav
+
+.mat-icon-size {
+  font-size: 35px;
+  height: 35px;
+  width: 35px;
+  color: $white;
+}
+
+.active-side-nav-link,
+.side-nav-link:hover {
+  background-color: $primaryLight;
+}
+
+.side-nav-link {
+  a {
+    color: $white;
+  }
+}
+
+// end side-nav
+
+.set-up-my-company-container {
+  background-color: $white;
+  color: $textColor;
+}
+
+
+.suffix-inline-icons {
+  display: flex;
+  gap: 3px;
+  .cursor-pointer {
+    cursor: pointer;
+  }
+}
+
+.error {
+  background-color: $errorBackground;
+  color: $errorColor;
+}
+
+.welcome-avatar {
+  border: $avatarBorder;
+  box-shadow: 1px 1px 1px 1px $secondary;
+}
+
+.welcome-info {
+  border-top: $welcomeInfoBorderTop;
+  p.welcome-info-item:nth-child(even) {
+    color: $primary;
+  }
+}
+
+.line-break-text {
+  white-space: pre-wrap;
+}
+
+.primary-color {
+  color: $primary;
+}
+
+.add-icon-hover:hover {
+  border-radius: 50%;
+  background-color: $tenary;
+}

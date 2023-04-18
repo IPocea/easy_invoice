@@ -1,0 +1,21 @@
+@import "../../../../styles/index.scss";
+
+:host {
+  .footer-container {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    h4 {
+      color: $white;
+    }
+  }
+  @media screen and (min-width: 820px) {
+    .footer-container {
+      flex-direction: row;
+      justify-content: space-around;
+    }
+  }
+}

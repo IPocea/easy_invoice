@@ -1,0 +1,298 @@
+<section>
+  <h2>Modele de contract</h2>
+  <form
+    (ngSubmit)="addEditContractModel()"
+    [formGroup]="addEditContractModelForm"
+    autocomplete="off"
+  >
+    <section class="share-space-contract-container">
+      <mat-form-field appearance="fill">
+        <mat-label>Numele modelului de contract</mat-label>
+        <input type="text" matInput formControlName="name" autocomplete="off" />
+        <mat-error
+          *ngIf="addEditContractModelForm.get('name').hasError('required')"
+        >
+          Numele este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+      <button
+        *ngIf="models?.length"
+        (click)="openDrawer()"
+        type="button"
+        mat-raised-button
+        color="primary"
+        class="select-model-btn"
+      >
+        Selecteaza model
+      </button>
+    </section>
+    <quill-editor
+      #myEditor
+      class="print-me"
+      placeholder="Scrie aici *"
+      [styles]="{
+        height: quillHeight,
+        backgroundColor: '#FFF'
+      }"
+      [modules]="quillModules"
+      formControlName="content"
+    ></quill-editor>
+    <section class="share-space-contract-container">
+      <button
+        type="submit"
+        mat-raised-button
+        color="primary"
+        [disabled]="addEditContractModelForm.invalid || isLoading"
+      >
+        {{ addEditBtnValue }}
+      </button>
+      <button
+        *ngIf="addEditContractModelForm.value.content"
+        (click)="previewModel()"
+        type="button"
+        mat-raised-button
+        matTooltip="Previzualizeaza"
+      >
+        <mat-icon>visibility</mat-icon>
+      </button>
+    </section>
+  </form>
+  <footer>
+    <section class="contract-model-btns-container">
+      <h4>
+        Datele societatii mele
+        <mat-icon [matTooltip]="contractModelInstructions">info</mat-icon>
+      </h4>
+      <div>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{nume-furnizor}')"
+        >
+          Nume <sup>*</sup>
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{J-furnizor}')"
+        >
+          J <sub>*</sub>
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{CUI-furnizor}')"
+        >
+          CUI <sup>*</sup>
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{sediu-furnizor}')"
+        >
+          Sediu <sup>*</sup>
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{judet-furnizor}')"
+        >
+          Judet <sup>*</sup>
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{cont-bancar-furnizor}')"
+        >
+          Cont bancar
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{banca-furnizor}')"
+        >
+          Banca
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{email-furnizor}')"
+        >
+          Email
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{telefon-furnizor}')"
+        >
+          Telefon
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{delegat-furnizor}')"
+        >
+          Delegat
+        </button>
+      </div>
+    </section>
+    <section class="contract-model-btns-container">
+      <h4>Datele cumparatorului</h4>
+      <div>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{nume-client}')"
+        >
+          Nume <sup>*</sup>
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{J/Serie-client}')"
+        >
+          J/Serie CI <sup>*</sup>
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{CUI/CNP-client}')"
+        >
+          CUI/CNP <sup>*</sup>
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{sediu-client}')"
+        >
+          Sediu <sup>*</sup>
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{judet-client}')"
+        >
+          Judet <sup>*</sup>
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{cont-bancar-client}')"
+        >
+          Cont bancar
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{banca-client}')"
+        >
+          Banca
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{email-client}')"
+        >
+          Email
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{telefon-client}')"
+        >
+          Telefon
+        </button>
+      </div>
+    </section>
+    <section class="contract-model-btns-container">
+      <h4>Date contract</h4>
+      <div>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{numar-contract}')"
+        >
+          Numar <sup>*</sup>
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{data-contract}')"
+        >
+          Data <sup>*</sup>
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{obiect-contract}')"
+        >
+          Obiectul <sup>*</sup>
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{produse-contract}')"
+        >
+          Produse
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{valoare-contract}')"
+        >
+          Valoarea
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{avans-contract}')"
+        >
+          Avans
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{rest-plata-contract}')"
+        >
+          Rest plata
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{metoda-plata-contract}')"
+        >
+          Metoda plata
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{transport-contract}')"
+        >
+          Transport
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{montaj-contract}')"
+        >
+          Montaj
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          (click)="insertFieldText('{termen-livrare-contract}')"
+        >
+          Termen livrare
+        </button>
+      </div>
+    </section>
+  </footer>
+  <div id="model-contract-pdf-container">
+    <quill-editor
+      [(ngModel)]="addEditContractModelForm.value.content"
+      [readOnly]="true"
+      [modules]="{toolbar: false}"
+      [styles]="{border: 'none'}"
+    ></quill-editor>
+  </div>
+</section>

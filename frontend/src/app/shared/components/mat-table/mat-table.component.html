@@ -1,0 +1,84 @@
+<div class="table-header">
+  <mat-form-field>
+    <input
+      matInput
+      (keyup)="applySearchFilter()"
+      (keydown)="clearTimeout()"
+      placeholder="Filter"
+      [(ngModel)]="searchValue"
+    />
+    <!-- it should be searchValue ? 'hidden' : '' but somehow instead of true
+    it is consirederd false. Maybe because ngModel -->
+    <button
+      [ngClass]="!searchValue ? 'hidden' : ''"
+      matSuffix
+      mat-icon-button
+      aria-label="Clear"
+      (click)="clearSearchValue()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <button
+    mat-mini-fab
+    aria-label="Add data to the table"
+    (click)="openTableForm('add-item')"
+  >
+    <mat-icon>add</mat-icon>
+  </button>
+</div>
+
+<div class="table-container mat-elevation-z8">
+  <mat-table
+    [dataSource]="dataSource"
+    matSort
+    (matSortChange)="sortData($event)"
+  >
+    <ng-container *ngFor="let col of displayedColumns" [matColumnDef]="col">
+      <ng-container *ngIf="col !== 'id'">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          [disabled]="isLoading"
+        >
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <pre>{{ row[col] }}</pre>
+        </mat-cell>
+      </ng-container>
+      <ng-container *ngIf="col === 'id'">
+        <mat-header-cell *matHeaderCellDef>
+          {{ 'MAT_TABLE.ACTIONS' }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <button
+            [title]="'MAT_TABLE.EDIT'"
+            [disabled]="isLoading"
+            (click)="openTableForm('edit-item', row)"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            [title]="'MAT_TABLE.DELETE'"
+            (click)="deleteItem(row[col])"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"> </mat-row>
+  </mat-table>
+
+  <mat-paginator
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    [pageSizeOptions]="pageSizeOptions"
+    [length]="length"
+    (page)="handlePageChange($event)"
+    [disabled]="isLoading"
+  ></mat-paginator>
+</div>

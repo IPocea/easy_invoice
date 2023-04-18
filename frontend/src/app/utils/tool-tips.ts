@@ -1,0 +1,1 @@
+export const contractModelInstructions: string = `In formularul de mai sus iti poti creea sau edita modelul de contract pe care ti-l doresti. Foloseste butoanele pentru a adauga campurile societatilor (ex. CUI, J) acolo unde iti doresti.`;

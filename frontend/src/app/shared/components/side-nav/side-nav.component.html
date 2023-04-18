@@ -1,0 +1,110 @@
+<nav>
+  <figure
+    class="side-nav-link"
+    routerLinkActive="active-side-nav-link"
+    routerLink="/bine-ai-venit"
+    (click)="scrollToPages()"
+  >
+    <a routerLink="/bine-ai-venit" (click)="scrollToPages()">
+      <mat-icon>bookmark</mat-icon>
+      <figcaption>{{ user.username }}</figcaption>
+    </a>
+  </figure>
+  <figure
+    class="side-nav-link"
+    routerLinkActive="active-side-nav-link"
+    routerLink="/factura/adauga"
+    (click)="scrollToPages()"
+  >
+    <a routerLink="/factura/adauga" (click)="scrollToPages()">
+      <mat-icon>add</mat-icon>
+      <figcaption>Adauga Factura</figcaption>
+    </a>
+  </figure>
+  <figure
+    class="side-nav-link"
+    routerLinkActive="active-side-nav-link"
+    routerLink="/facturi"
+    (click)="scrollToPages()"
+  >
+    <a routerLink="/facturi" (click)="scrollToPages()">
+      <mat-icon>account_balance</mat-icon>
+      <figcaption>Facturi</figcaption>
+    </a>
+  </figure>
+  <figure
+    class="side-nav-link"
+    routerLinkActive="active-side-nav-link"
+    routerLink="/contracte"
+    (click)="scrollToPages()"
+  >
+    <a routerLink="/contracte" (click)="scrollToPages()">
+      <mat-icon>list_alt</mat-icon>
+      <figcaption>Contracte</figcaption>
+    </a>
+  </figure>
+  <figure
+    class="side-nav-link"
+    routerLinkActive="active-side-nav-link"
+    routerLink="/persoane-fizice"
+    (click)="scrollToPages()"
+  >
+    <a routerLink="/persoane-fizice" (click)="scrollToPages()">
+      <mat-icon>face</mat-icon>
+      <figcaption>Persoane Fizice</figcaption>
+    </a>
+  </figure>
+  <figure
+    class="side-nav-link"
+    routerLinkActive="active-side-nav-link"
+    routerLink="/societati"
+    (click)="scrollToPages()"
+  >
+    <a routerLink="/societati" (click)="scrollToPages()">
+      <mat-icon>corporate_fare</mat-icon>
+      <figcaption>Societati</figcaption>
+    </a>
+  </figure>
+  <figure
+    class="side-nav-link"
+    routerLinkActive="active-side-nav-link"
+    routerLink="/societatea-mea"
+    (click)="scrollToPages()"
+  >
+    <a routerLink="/societatea-mea" (click)="scrollToPages()">
+      <mat-icon>business_center</mat-icon>
+      <figcaption>Societatea mea</figcaption>
+    </a>
+  </figure>
+  <figure
+    class="side-nav-link"
+    routerLinkActive="active-side-nav-link"
+    routerLink="/modele-contract"
+    (click)="scrollToPages()"
+  >
+    <a routerLink="/modele-contract" (click)="scrollToPages()">
+      <mat-icon>pattern</mat-icon>
+      <figcaption>Modele de contract</figcaption>
+    </a>
+  </figure>
+  <figure
+    class="side-nav-link"
+    routerLinkActive="active-side-nav-link"
+    *ngIf="user.role.indexOf('admin') !== -1"
+    routerLink="/useri"
+    (click)="scrollToPages()"
+  >
+    <a routerLink="/useri" (click)="scrollToPages()">
+      <mat-icon>group</mat-icon>
+      <figcaption>Useri</figcaption>
+    </a>
+  </figure>
+  <iframe
+    style="width: 120px; height: auto"
+    frameborder="0"
+    marginwidth="0"
+    marginheight="0"
+    scrolling="no"
+    src="https://www.cursbnr.ro/insert/cursvalutar.php?w=200&b=094296&bl=ffffff&ttc=ffffff&tc=ffffff&diff=1&ron=1&cb=1&pics=1"
+  ></iframe>
+</nav>

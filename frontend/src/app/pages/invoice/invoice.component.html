@@ -1,0 +1,309 @@
+<section class="invoice-container" *ngIf="!isLoading; else loading">
+  <h2>{{ currentInvoice ? "Editeaza factura" : "Adauga factura" }}</h2>
+  <form
+    autocomplete="off"
+    [formGroup]="addEditInvoiceForm"
+    (ngSubmit)="addEditInvoice()"
+  >
+    <article class="buyer-and-contract-model-btn-container">
+      <section>
+        <button
+          *ngIf="!addEditInvoiceForm.value.buyer.name"
+          type="button"
+          mat-raised-button
+          (click)="addChangeBuyer()"
+        >
+          Adauga cumparator <sup>*</sup>
+        </button>
+        <button
+          *ngIf="addEditInvoiceForm.value.buyer.name"
+          type="button"
+          mat-raised-button
+          color="primary"
+          (click)="addChangeBuyer()"
+        >
+          {{ addEditInvoiceForm.value.buyer.name }} <sup>*</sup>
+        </button>
+      </section>
+      <section>
+        <button
+          *ngIf="!selectedContractModel"
+          type="button"
+          mat-raised-button
+          (click)="selectContractModel()"
+        >
+          Alege model de contract <sup>*</sup>
+        </button>
+        <button
+          *ngIf="selectedContractModel"
+          type="button"
+          mat-raised-button
+          color="primary"
+          (click)="selectContractModel()"
+        >
+          {{ addEditInvoiceForm.value.contract.content.name }} <sup>*</sup>
+        </button>
+      </section>
+    </article>
+    <article formGroupName="invoice">
+      <mat-form-field appearance="fill">
+        <mat-label>Tipul facturii</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="typeOfInvoice"
+          autocomplete="off"
+        />
+        <mat-error
+          *ngIf="
+            addEditInvoiceForm.get('invoice.typeOfInvoice').hasError('required')
+          "
+        >
+          Tipul facturii este <strong>obligatorie</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Seria facturii</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="series"
+          autocomplete="off"
+        />
+        <mat-error
+          *ngIf="addEditInvoiceForm.get('invoice.series').hasError('required')"
+        >
+          Seria facturii este <strong>obligatorie</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Numarul facturii</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="number"
+          autocomplete="off"
+        />
+        <mat-error
+          *ngIf="addEditInvoiceForm.get('invoice.number').hasError('required')"
+        >
+          Numarul facturii este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Data</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          formControlName="date"
+          (focus)="picker.open()"
+        />
+        <mat-hint>LL/ZZ/AAAA</mat-hint>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error
+          *ngIf="addEditInvoiceForm.get('invoice.date').hasError('required')"
+        >
+          Data este <strong>obligatorie</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Numarul avizului de insotire</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="numberOfAccompanyingNotice"
+          autocomplete="off"
+        />
+      </mat-form-field>
+      <mat-form-field *ngIf="currentInvoice?.isCancelled" appearance="fill">
+        <mat-label>Mentiuni de anulare</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="cancellationNotices"
+          autocomplete="off"
+        />
+      </mat-form-field>
+    </article>
+    <article formGroupName="contract">
+      <mat-form-field appearance="fill">
+        <mat-label>Numarul contractului</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="number"
+          autocomplete="off"
+        />
+        <mat-error
+          *ngIf="addEditInvoiceForm.get('contract.number').hasError('required')"
+        >
+          Numarul contractului este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Obiectul contractului</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="subjectOfContract"
+          autocomplete="off"
+        />
+        <mat-error
+          *ngIf="
+            addEditInvoiceForm
+              .get('contract.subjectOfContract')
+              .hasError('required')
+          "
+        >
+          Obiectul contractului este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Transport</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="transport"
+          autocomplete="off"
+        />
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Montaj</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="installation"
+          autocomplete="off"
+        />
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Metoda de plata</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="paymentMethod"
+          autocomplete="off"
+        />
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Termen de livrare</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="deliveryTime"
+          autocomplete="off"
+        />
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Avans</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="paymentAdvance"
+          autocomplete="off"
+        />
+      </mat-form-field>
+      <quill-editor
+        #myEditor
+        class="print-me"
+        placeholder="Rest plata *"
+        [styles]="{
+          height: '100px',
+          backgroundColor: '#FFF'
+        }"
+        [modules]="quillModules"
+        formControlName="restOfPayment"
+      ></quill-editor>
+    </article>
+    <article>
+      <header>
+        <button
+          (click)="addProduct()"
+          type="button"
+          mat-raised-button
+          color="primary"
+        >
+          Adauga produs
+        </button>
+      </header>
+      <ng-container *ngIf="addEditInvoiceForm">
+        <section
+          class="invoice-products-container"
+          formArrayName="products"
+          *ngFor="let product of products.controls; let i = index"
+        >
+          <ng-container [formGroupName]="i">
+            <mat-form-field appearance="fill">
+              <mat-label>Denumire produs</mat-label>
+              <input
+                type="text"
+                matInput
+                formControlName="name"
+                [id]="'name' + i"
+                autocomplete="off"
+              />
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>U.M.</mat-label>
+              <input
+                type="text"
+                matInput
+                formControlName="UM"
+                [id]="'UM' + i"
+                autocomplete="off"
+              />
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Cantitate</mat-label>
+              <input
+                type="number"
+                matInput
+                formControlName="quantity"
+                [id]="'quantity' + i"
+                autocomplete="off"
+              />
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Pret unitar</mat-label>
+              <input
+                type="number"
+                matInput
+                formControlName="unitPrice"
+                [id]="'unitPrice' + i"
+                autocomplete="off"
+              />
+            </mat-form-field>
+            <button
+              *ngIf="products.controls.length > 1"
+              matTooltip="Sterge produs"
+              mat-raised-button
+              color="accent"
+              type="button"
+              class="invoice-remove-product-btn"
+              [disabled]="isAddingEditing"
+              (click)="deleteProduct(product.value, i)"
+            >
+              <mat-icon>delete_forever</mat-icon>
+            </button>
+          </ng-container>
+        </section>
+      </ng-container>
+    </article>
+    <button
+      type="submit"
+      mat-raised-button
+      color="primary"
+      class="mat-focus-indicator secondary-text primary-bg mat-button mat-button-base padding-12"
+      [disabled]="addEditInvoiceForm.invalid || isAddingEditing"
+    >
+      {{ addEditInvoiceBtnMessage }}
+    </button>
+  </form>
+</section>
+
+<ng-template #loading>
+  <div class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

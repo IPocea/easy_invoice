@@ -1,0 +1,94 @@
+:host {
+  .invoice-container {
+    position: relative;
+    height: 100%;
+    h2 {
+      text-align: center;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin: 10px 0;
+      article {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        section {
+          width: 100%;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 5px;
+        }
+        section.invoice-products-container {
+          > * {
+            width: 100%;
+          }
+        }
+      }
+      article.buyer-and-contract-model-btn-container {
+        section {
+          button {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+
+  @media screen and (min-width: 820px) {
+    .invoice-container {
+      form {
+        article {
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: center;
+          header {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+          }
+          mat-form-field {
+            width: 24%;
+          }
+          quill-editor {
+            width: 100%;
+          }
+
+          section.invoice-products-container {
+            > * {
+              width: unset;
+            }
+            mat-form-field:first-child {
+              flex: 1;
+            }
+            button.invoice-remove-product-btn {
+              height: 59px;
+            }
+          }
+        }
+        article.buyer-and-contract-model-btn-container {
+          section {
+            width: unset;
+            button {
+              width: 350px;
+              overflow: hidden;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media screen and (min-width: 1330px) {
+    .invoice-container {
+      form {
+        article {
+          mat-form-field {
+            width: 19%;
+          }
+        }
+      }
+    }
+  }
+}

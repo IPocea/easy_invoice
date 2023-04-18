@@ -1,0 +1,121 @@
+<header
+  cdkDrag
+  cdkDragRootElement=".cdk-overlay-pane"
+  cdkDragHandle
+  class="dialog-title"
+>
+  <h4>{{ company.name }}</h4>
+</header>
+<main mat-dialog-content>
+  <form [formGroup]="viewCompanyForm" autocomplete="off">
+    <input type="text" name="email" style="display: none" />
+    <input type="password" style="display: none" />
+    <input type="email" style="display: none" />
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Numele societatii</mat-label>
+        <input type="text" matInput formControlName="name" autocomplete="off" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Nr. de inmatriculare in Registrul comertului</mat-label>
+        <input type="text" matInput formControlName="J" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Codul fiscal</mat-label>
+        <input type="text" matInput formControlName="CUI" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Sediul</mat-label>
+        <input type="text" matInput formControlName="headquarters" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Judetul</mat-label>
+        <input type="text" matInput formControlName="county" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Cont bancar</mat-label>
+        <input type="text" matInput formControlName="bankAccount" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Banca</mat-label>
+        <input type="text" matInput formControlName="bank" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Cota TVA</mat-label>
+        <input type="text" matInput formControlName="vatRate" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input type="text" autocomplete="of" matInput formControlName="email" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Nr. telefon</mat-label>
+        <input type="text" matInput formControlName="phone" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Status</mat-label>
+        <mat-select name="status" formControlName="isActivated">
+          <mat-option
+            *ngFor="let choice of companyStatusChoices"
+            [value]="choice.value"
+          >
+            {{ choice.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Adaugat de</mat-label>
+        <input
+          type="text"
+          autocomplete="of"
+          matInput
+          formControlName="addedBy"
+        />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Editat de</mat-label>
+        <input
+          type="text"
+          autocomplete="of"
+          matInput
+          formControlName="editedBy"
+        />
+      </mat-form-field>
+    </section>
+    <section>
+      <button
+        type="button"
+        (click)="closeDialog()"
+        class="w-100"
+        mat-raised-button
+        color="accent"
+      >
+        Inchide
+      </button>
+    </section>
+  </form>
+</main>

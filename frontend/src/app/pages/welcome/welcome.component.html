@@ -1,0 +1,54 @@
+<ng-container *ngIf="!isLoading && currentUser; else loading">
+  <section class="welcome-container">
+    <div class="welcome-left-side">
+      <div class="welcome-avatar">
+        <p>{{ currentUser | userInitials }}</p>
+      </div>
+      <div class="welcome-btns">
+        <button mat-raised-button color="primary" (click)="openChangePass()">
+          Schimba parola
+        </button>
+        <button
+          mat-raised-button
+          color="accent"
+          [disabled]="isLoggingOut"
+          (click)="logout()"
+        >
+          Logout
+        </button>
+      </div>
+    </div>
+    <div class="welcome-info">
+      <p class="welcome-info-item"><strong>Nume</strong></p>
+      <p class="welcome-info-item">{{ currentUser.lastName }}</p>
+      <p class="welcome-info-item"><strong>Prenume</strong></p>
+      <p class="welcome-info-item">{{ currentUser.firstName }}</p>
+      <p class="welcome-info-item"><strong>Username</strong></p>
+      <p class="welcome-info-item">{{ currentUser.username }}</p>
+      <p class="welcome-info-item"><strong>Email</strong></p>
+      <p class="welcome-info-item">{{ currentUser.email }}</p>
+    </div>
+  </section>
+
+  <section class="note-container">
+    <h4>Nota personala</h4>
+    <mat-form-field appearance="fill">
+      <mat-label>Poti salva aici o nota</mat-label>
+      <textarea
+        [(ngModel)]="noteValue"
+        (blur)="saveNote()"
+        class="line-break-text"
+        matInput
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="20"
+        cdkAutosizeMaxRows="30"
+      ></textarea>
+    </mat-form-field>
+  </section>
+</ng-container>
+
+<ng-template #loading>
+  <div class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

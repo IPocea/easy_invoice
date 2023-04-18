@@ -1,0 +1,30 @@
+@import "../../../../styles/index.scss";
+
+:host {
+  nav {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    h2 {
+      cursor: pointer;
+    }
+    h2:hover {
+      opacity: 0.8;
+    }
+    h2:active {
+      opacity: 0.6;
+    }
+    section {
+      p {
+        cursor: pointer;
+      }
+    }
+  }
+  @media screen and (min-width: 820px) {
+    nav {
+      flex-direction: row;
+    }
+  }
+}

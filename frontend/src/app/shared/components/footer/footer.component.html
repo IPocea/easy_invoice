@@ -1,0 +1,19 @@
+<div class="footer-container">
+  <iframe
+    style="width: 200px; height: 95px"
+    frameborder="0"
+    marginwidth="0"
+    marginheight="0"
+    scrolling="no"
+    src="https://www.cursbnr.ro/insert/cursvalutar.php?w=200&b=094296&bl=ffffff&ttc=ffffff&tc=ffffff&diff=1&ron=1&cb=1&pics=1"
+  ></iframe>
+  <h4 class="text-center">
+    <span>Copyright &copy; {{ currentYear }}</span>
+    <span *ngIf="!myCompany; else myCompanyName"> Easy Invoice</span> Toate
+    drepturile rezervate
+  </h4>
+</div>
+
+<ng-template #myCompanyName>
+  <span> {{ myCompany.name }}</span>
+</ng-template>

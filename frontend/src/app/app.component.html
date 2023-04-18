@@ -1,0 +1,26 @@
+<ng-container *ngIf="!isLoading; else loading">
+  <!-- <header *ngIf="user && myCompany">
+    <app-header [myCompany]="myCompany"></app-header>
+  </header> -->
+  <main
+    [ngClass]="
+      user && myCompany ? 'main-container' : 'main-container-not-logged-in'
+    "
+  >
+    <div *ngIf="user && myCompany" class="left-side">
+      <app-side-nav [user]="user"></app-side-nav>
+    </div>
+    <div id="main-right-side-pages" class="right-side">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+  <!-- <footer *ngIf="user && myCompany">
+    <app-footer [myCompany]="myCompany"></app-footer>
+  </footer> -->
+</ng-container>
+
+<ng-template #loading>
+  <div class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

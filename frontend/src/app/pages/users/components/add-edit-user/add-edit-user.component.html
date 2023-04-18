@@ -1,0 +1,184 @@
+<header
+  cdkDrag
+  cdkDragRootElement=".cdk-overlay-pane"
+  cdkDragHandle
+  class="dialog-title"
+>
+  <h4>{{ user ? "Editeaza User" : "Adauga User" }}</h4>
+</header>
+<main mat-dialog-content>
+  <form (ngSubmit)="addEditUser()" [formGroup]="addEditUserForm" autocomplete="off">
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Username</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="username"
+          autocomplete="off"
+        />
+        <mat-icon [matTooltip]="usernameTooltip" matSuffix
+          >info_outline</mat-icon
+        >
+        <mat-error
+          *ngIf="
+            addEditUserForm.get('username').hasError('required') ||
+            addEditUserForm.get('username').hasError('pattern')
+          "
+        >
+          Username invalid
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Prenume</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="firstName"
+          autocomplete="off"
+        />
+        <mat-error
+          *ngIf="
+            addEditUserForm.get('firstName').hasError('required') ||
+            addEditUserForm.get('firstName').hasError('pattern')
+          "
+        >
+          Prenume invalid
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Nume</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="lastName"
+          autocomplete="off"
+        />
+        <mat-error
+          *ngIf="
+            addEditUserForm.get('lastName').hasError('required') ||
+            addEditUserForm.get('lastName').hasError('pattern')
+          "
+        >
+          Nume invalid
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input type="text" matInput formControlName="email" />
+        <mat-error
+          *ngIf="
+            addEditUserForm.get('email').hasError('required') ||
+            addEditUserForm.get('email').hasError('pattern')
+          "
+        >
+          Email invalid
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <input type="password" style="display: none" />
+    <section [ngClass]="user ? 'd-none' : ''">
+      <mat-form-field appearance="fill">
+        <mat-label>Parola</mat-label>
+        <input
+          [type]="isPasswordHidden ? 'password' : 'text'"
+          autocomplete="new-password"
+          matInput
+          formControlName="password"
+          autocomplete="off"
+        />
+        <span matSuffix class="suffix-inline-icons">
+          <mat-icon [matTooltip]="passwordTooltip">info_outline</mat-icon>
+          <mat-icon
+            matTooltip="{{
+              isPasswordHidden ? 'Show Password' : 'Hide Password'
+            }}"
+            class="cursor-pointer"
+            (click)="isPasswordHidden = !isPasswordHidden"
+          >
+            {{ isPasswordHidden ? "visibility_off" : "visibility" }}
+          </mat-icon>
+        </span>
+        <mat-error
+          *ngIf="
+            addEditUserForm.get('password').hasError('required') ||
+            addEditUserForm.get('password').hasError('pattern')
+          "
+        >
+          Parola invalida
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section [ngClass]="user ? 'd-none' : ''">
+      <mat-form-field appearance="fill">
+        <mat-label>Confirma Parola</mat-label>
+        <input
+          [type]="isPasswordHidden ? 'password' : 'text'"
+          autocomplete="new-password"
+          matInput
+          formControlName="confirmPassword"
+        />
+        <mat-icon
+          matSuffix
+          matTooltip="{{
+            isPasswordHidden ? 'Show Password' : 'Hide Password'
+          }}"
+          class="cursor-pointer"
+          (click)="isPasswordHidden = !isPasswordHidden"
+        >
+          {{ isPasswordHidden ? "visibility_off" : "visibility" }}
+        </mat-icon>
+        <mat-error
+          *ngIf="f['confirmPassword'].touched && f['confirmPassword'].invalid"
+        >
+          <span *ngIf="f['confirmPassword'].errors['required']"
+            >Parola invalida</span
+          >
+          <span *ngIf="f['confirmPassword'].errors['confirmedValidator']"
+            >Parola nu se potriveste</span
+          >
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Status</mat-label>
+        <mat-select name="status" formControlName="isActivated">
+          <mat-option
+            *ngFor="let choice of userStatusChoices"
+            [value]="choice.value"
+          >
+            {{ choice.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </section>
+    <section>
+      <div class="btns-container">
+        <button
+          type="submit"
+          mat-raised-button
+          color="primary"
+          [disabled]="addEditUserForm.invalid || isLoading"
+        >
+          {{ addEditUserBtnMessage }}
+        </button>
+        <button
+          type="button"
+          (click)="closeDialog()"
+          mat-raised-button
+          color="accent"
+          [disabled]="isLoading"
+        >
+          Renunta
+        </button>
+      </div>
+    </section>
+  </form>
+</main>

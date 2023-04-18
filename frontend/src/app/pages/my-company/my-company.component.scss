@@ -1,0 +1,41 @@
+:host {
+  section {
+    padding: 15px;
+    width: 100%;
+    form {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      width: 100%;
+      gap: 10px;
+      section {
+        width: 100%;
+        button {
+          width: 100%;
+        }
+      }
+      section.user-action-info {
+        display: flex;
+        flex-direction: column;
+        p {
+          font-size: small;
+        }
+      }
+    }
+  }
+  @media screen and (min-width: 820px) {
+    section {
+      form {
+        section {
+          width: 32%;
+        }
+        section.user-action-info {
+          align-items: end;
+          width: 97.95%;
+          gap: 2px;
+        }
+      }
+    }
+  }
+}

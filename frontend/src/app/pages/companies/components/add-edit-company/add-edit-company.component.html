@@ -1,0 +1,140 @@
+<header
+  cdkDrag
+  cdkDragRootElement=".cdk-overlay-pane"
+  cdkDragHandle
+  class="dialog-title"
+>
+  <h4>{{ company ? "Editeaza societatea" : "Adauga societate" }}</h4>
+</header>
+<main mat-dialog-content>
+  <form
+    (ngSubmit)="addEditCompany()"
+    [formGroup]="addEditCompanyForm"
+    autocomplete="off"
+  >
+    <input type="text" name="email" style="display: none" />
+    <input type="password" style="display: none" />
+    <input type="email" style="display: none" />
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Numele societatii</mat-label>
+        <input type="text" matInput formControlName="name" autocomplete="off" />
+        <mat-error *ngIf="addEditCompanyForm.get('name').hasError('required')">
+          Numele este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Nr. de inmatriculare in Registrul comertului</mat-label>
+        <input type="text" matInput formControlName="J" />
+        <mat-error *ngIf="addEditCompanyForm.get('J').hasError('required')">
+          Nr. de inmatriculare este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Codul fiscal</mat-label>
+        <input type="text" matInput formControlName="CUI" />
+        <mat-error *ngIf="addEditCompanyForm.get('CUI').hasError('required')">
+          Codul fiscal este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Sediul</mat-label>
+        <input type="text" matInput formControlName="headquarters" />
+        <mat-error
+          *ngIf="addEditCompanyForm.get('headquarters').hasError('required')"
+        >
+          Sediul este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Judetul</mat-label>
+        <input type="text" matInput formControlName="county" />
+        <mat-error
+          *ngIf="addEditCompanyForm.get('county').hasError('required')"
+        >
+          Judetul este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Cont bancar</mat-label>
+        <input type="text" matInput formControlName="bankAccount" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Banca</mat-label>
+        <input type="text" matInput formControlName="bank" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Cota TVA</mat-label>
+        <input type="text" matInput formControlName="vatRate" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input type="text" autocomplete="of" matInput formControlName="email" />
+        <mat-error *ngIf="addEditCompanyForm.get('email').hasError('pattern')">
+          Email invalid
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Nr. telefon</mat-label>
+        <input type="text" matInput formControlName="phone" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Status</mat-label>
+        <mat-select name="status" formControlName="isActivated">
+          <mat-option
+            *ngFor="let choice of companyStatusChoices"
+            [value]="choice.value"
+          >
+            {{ choice.viewValue }}
+          </mat-option>
+        </mat-select>
+        <mat-error
+          *ngIf="addEditCompanyForm.get('isActivated').hasError('required')"
+        >
+          Statusul este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <div class="btns-container">
+        <button
+          type="submit"
+          mat-raised-button
+          color="primary"
+          [disabled]="addEditCompanyForm.invalid || isLoading"
+        >
+          {{ addEditCompanyBtnMessage }}
+        </button>
+        <button
+          type="button"
+          (click)="closeDialog()"
+          mat-raised-button
+          color="accent"
+          [disabled]="isLoading"
+        >
+          Renunta
+        </button>
+      </div>
+    </section>
+  </form>
+</main>

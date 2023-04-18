@@ -1,0 +1,47 @@
+@use "src/styles/mixins.scss" as mixins;
+
+:host {
+  @include mixins.add-form();
+  header {
+    h4 {
+      text-align: center;
+    }
+  }
+  main {
+    padding: 10px;
+    section.select-buyer-type-btn-container {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    section.search-buyer-container {
+      text-align: center;
+      .search-body {
+        text-align: start;
+        ul {
+          padding: 0;
+          li {
+            display: flex;
+            list-style-type: none;
+            mat-icon {
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    }
+  }
+  @media screen and (min-width: 820px) {
+    main {
+      section.select-buyer-type-btn-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        button {
+          width: 45%;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,170 @@
+<div class="table-header">
+  <mat-form-field>
+    <input
+      matInput
+      (keyup)="applySearchFilter()"
+      (keydown)="clearTimeout()"
+      placeholder="Username sau email"
+      [(ngModel)]="searchValue"
+    />
+    <button
+      [ngClass]="!searchValue ? 'hidden' : ''"
+      matSuffix
+      mat-icon-button
+      aria-label="Clear"
+      (click)="clearSearchValue()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <button
+    mat-fab
+    color="primary"
+    aria-label="Add data to the table"
+    matTooltip="Adauga user"
+    (click)="openTableForm('add-user')"
+  >
+    <mat-icon>add</mat-icon>
+  </button>
+</div>
+
+<div class="table-container mat-elevation-z8">
+  <mat-table
+    [dataSource]="dataSource"
+    matSort
+    (matSortChange)="sortData($event)"
+  >
+    <ng-container *ngFor="let col of displayedColumns" [matColumnDef]="col">
+      <ng-container
+        *ngIf="
+          col !== '_id' &&
+          col !== 'role' &&
+          col !== 'isActivated' &&
+          col !== 'updatedAt' &&
+          col !== 'createdAt'
+        "
+      >
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          [disabled]="isLoading"
+        >
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <small *ngIf="col !== 'isActivated'">{{ row[col] }}</small>
+        </mat-cell>
+      </ng-container>
+      <ng-container *ngIf="col === 'role'">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          [disabled]="isLoading"
+        >
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <small
+            [ngClass]="row.role === 'admin' ? 'text-primary' : 'text-success'"
+            >{{ row[col] }}</small
+          >
+        </mat-cell>
+      </ng-container>
+      <ng-container *ngIf="col === 'isActivated'">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          [disabled]="isLoading"
+        >
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <small
+            [ngClass]="row.isActivated ? 'text-success' : 'text-danger'"
+            *ngIf="col === 'isActivated'"
+            >{{ row[col] ? "Activ" : "Inactiv" }}</small
+          >
+        </mat-cell>
+      </ng-container>
+      <ng-container *ngIf="col === '_id'">
+        <mat-header-cell *matHeaderCellDef> Actiuni </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <button
+            *ngIf="row.isActivated && row.role !== 'admin'"
+            matTooltip="Dezactiveaza user"
+            [disabled]="isLoading"
+            (click)="toggleUserStatus(row)"
+          >
+            <mat-icon> close </mat-icon>
+          </button>
+          <button
+            *ngIf="!row.isActivated && row.role !== 'admin'"
+            matTooltip="Activeaza user"
+            [disabled]="isLoading"
+            (click)="toggleUserStatus(row)"
+          >
+            <mat-icon> check_circle_outline </mat-icon>
+          </button>
+          <button
+            matTooltip="Editeaza user"
+            [disabled]="isLoading"
+            (click)="openTableForm('edit-user', row)"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            matTooltip="Schimba parola"
+            [disabled]="isLoading"
+            (click)="openTableForm('change-password', row)"
+          >
+            <mat-icon>vpn_key</mat-icon>
+          </button>
+          <button
+            *ngIf="row.role !== 'admin'"
+            matTooltip="Sterge userul"
+            (click)="deleteUser(row[col])"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+      <ng-container *ngIf="col === 'updatedAt'">
+        <mat-header-cell *matHeaderCellDef>
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <small *ngIf="row.createdAt === row.updatedAt">Nemodificat</small>
+          <small *ngIf="row.createdAt !== row.updatedAt">
+            {{ row.updatedAt | customDate }}
+          </small>
+        </mat-cell>
+      </ng-container>
+      <ng-container *ngIf="col === 'createdAt'">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          [disabled]="isLoading"
+        >
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <small>
+            {{ row.createdAt | customDate }}
+          </small>
+        </mat-cell>
+      </ng-container>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"> </mat-row>
+  </mat-table>
+</div>
+<mat-paginator
+  [pageSize]="pageSize"
+  [pageIndex]="pageIndex"
+  [pageSizeOptions]="pageSizeOptions"
+  [length]="length"
+  [showFirstLastButtons]="showFirstLastButtons"
+  (page)="handlePageChange($event)"
+  [disabled]="isLoading"
+></mat-paginator>

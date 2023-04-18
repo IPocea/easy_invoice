@@ -1,0 +1,55 @@
+<section>
+  <header>
+    <h4>Lista modele contract</h4>
+    <small class="primary-color" (click)="emptyForm()">Adauga un model nou</small>
+  </header>
+  <mat-form-field>
+    <input
+      matInput
+      (keyup)="applySearchFilter()"
+      (keydown)="clearTimeout()"
+      placeholder="Cauta model..."
+      [(ngModel)]="searchValue"
+    />
+    <button
+      [ngClass]="!searchValue ? 'hidden' : ''"
+      matSuffix
+      mat-icon-button
+      aria-label="Clear"
+      (click)="clearSearchValue()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <ul *ngIf="areModelsDisplayed" class="contract-models-list-container">
+    <li *ngFor="let model of models">
+      <mat-accordion #panel [multi]="false">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <span>
+                {{ model.name }}
+              </span>
+              <span>
+                <button
+                  (click)="selectModel($event, model)"
+                  matTooltip="Selecteaza model"
+                >
+                  <mat-icon>add_box</mat-icon>
+                </button>
+                <button
+                  (click)="deleteModel($event, model._id)"
+                  matTooltip="Sterge model"
+                  [disabled]="isDeleting"
+                >
+                  <mat-icon>delete_forever</mat-icon>
+                </button>
+              </span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div [innerHTML]="model.content"></div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </li>
+  </ul>
+</section>

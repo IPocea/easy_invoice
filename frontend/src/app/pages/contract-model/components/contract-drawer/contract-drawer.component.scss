@@ -1,0 +1,55 @@
+:host {
+  section {
+    box-sizing: border-box;
+    padding: 10px;
+    width: 300px;
+    header {
+      small {
+        font-size: smaller;
+        cursor: pointer;
+      }
+    }
+    ul {
+      padding: 0;
+      li {
+        list-style: none;
+        margin-bottom: 5px;
+        mat-accordion {
+          mat-expansion-panel {
+            mat-expansion-panel-header {
+              mat-panel-title {
+                display: flex;
+                justify-content: space-between;
+                span {
+                  button {
+                    background-color: inherit;
+                    border: none;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media screen and (min-width: 520px) {
+    section {
+      width: 450px;
+    }
+  }
+
+  @media screen and (min-width: 820px) {
+    section {
+      width: 600px;
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    section {
+      width: 800px;
+    }
+  }
+
+}

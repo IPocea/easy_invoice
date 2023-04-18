@@ -1,0 +1,56 @@
+<header
+  cdkDrag
+  cdkDragRootElement=".cdk-overlay-pane"
+  cdkDragHandle
+  class="dialog-title"
+>
+  <h4>Selecteaza model de contract</h4>
+</header>
+
+<main mat-dialog-content>
+  <section class="search-contract-model-container">
+    <div class="search-header">
+      <mat-form-field>
+        <input
+          matInput
+          (keyup)="applySearchFilter()"
+          (keydown)="clearTimeout()"
+          placeholder="Cautare..."
+          [(ngModel)]="searchValue"
+        />
+        <button
+          [ngClass]="!searchValue ? 'hidden' : ''"
+          matSuffix
+          mat-icon-button
+          aria-label="Clear"
+          (click)="clearSearchValue()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+    <div class="search-body" *ngIf="contractModels.length; else notFound">
+      <ul>
+        <li *ngFor="let contractModel of contractModels">
+          <span>{{ contractModel.name }}</span>
+          <mat-icon
+            matTooltip="Selecteaza"
+            matTooltipPosition="right"
+            class="add-icon-hover"
+            (click)="sendContractModel(contractModel)"
+            >add</mat-icon
+          >
+        </li>
+      </ul>
+    </div>
+  </section>
+  <section class="text-center mt-1">
+    <button mat-raised-button color="accent" (click)="closeDialog()">
+      Renunta
+    </button>
+  </section>
+</main>
+
+<ng-template #notFound>
+  <p *ngIf="isNotFoundDisplayed">Nu am gasit niciun model</p>
+</ng-template>

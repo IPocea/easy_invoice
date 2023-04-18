@@ -1,0 +1,239 @@
+<header
+  cdkDrag
+  cdkDragRootElement=".cdk-overlay-pane"
+  cdkDragHandle
+  class="dialog-title"
+>
+  <h4>
+    {{
+      isAddFormDisplayed
+        ? "Adauga cumparator"
+        : !isSearchBarDisplayed && !isAddFormDisplayed
+        ? "Selecteaza tipul de cumparator"
+        : "Cauta cumparator"
+    }}
+  </h4>
+</header>
+<main mat-dialog-content>
+  <section
+    *ngIf="!isSearchBarDisplayed && !isAddFormDisplayed"
+    class="select-buyer-type-btn-container"
+  >
+    <button mat-raised-button (click)="displaySearchBar('companies')">
+      Persoana juridica
+    </button>
+    <button mat-raised-button (click)="displaySearchBar('individuals')">
+      Persoana fizica
+    </button>
+  </section>
+  <section *ngIf="isSearchBarDisplayed" class="search-buyer-container">
+    <div class="search-header">
+      <mat-form-field>
+        <input
+          matInput
+          (keyup)="applySearchFilter()"
+          (keydown)="clearTimeout()"
+          placeholder="Cautare..."
+          [(ngModel)]="searchValue"
+        />
+        <button
+          [ngClass]="!searchValue ? 'hidden' : ''"
+          matSuffix
+          mat-icon-button
+          aria-label="Clear"
+          (click)="clearSearchValue()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      <button
+        mat-fab
+        color="primary"
+        aria-label="Add data to the table"
+        [matTooltip]="
+          isBuyerCompany ? 'Adauga companie' : 'Adauga persoana fizica'
+        "
+        (click)="displayAddForm()"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+    <div class="search-body" *ngIf="buyers.length; else notFound">
+      <ul>
+        <li *ngFor="let buyer of buyers">
+          <span>{{ buyer.name }}</span>
+          <mat-icon
+            class="add-icon-hover"
+            matTooltip="Selecteaza"
+            matTooltipPosition="right"
+            (click)="sendBuyer(buyer)"
+            >add</mat-icon
+          >
+        </li>
+      </ul>
+    </div>
+  </section>
+  <form
+    *ngIf="isAddFormDisplayed"
+    (ngSubmit)="addIndivOrComp()"
+    [formGroup]="addIndivOrCompForm"
+    autocomplete="off"
+  >
+    <input type="text" name="email" style="display: none" />
+    <input type="password" style="display: none" />
+    <input type="email" style="display: none" />
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Numele persoanei fizice</mat-label>
+        <input type="text" matInput formControlName="name" autocomplete="off" />
+        <mat-error *ngIf="addIndivOrCompForm.get('name').hasError('required')">
+          Numele este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section *ngIf="!isBuyerCompany">
+      <mat-form-field appearance="fill">
+        <mat-label>Seria CI</mat-label>
+        <input type="text" matInput formControlName="series" />
+        <mat-error
+          *ngIf="addIndivOrCompForm.get('series').hasError('required')"
+        >
+          Seria CI este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section *ngIf="!isBuyerCompany">
+      <mat-form-field appearance="fill">
+        <mat-label>CNP-ul</mat-label>
+        <input type="text" matInput formControlName="CNP" />
+        <mat-error *ngIf="addIndivOrCompForm.get('CNP').hasError('required')">
+          CNP-ul este <strong>obligatoriu</strong>
+        </mat-error>
+        <mat-error *ngIf="addIndivOrCompForm.get('CNP').hasError('pattern')">
+          CNP-ul poate fi compus doar din cifre
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section *ngIf="isBuyerCompany">
+      <mat-form-field appearance="fill">
+        <mat-label>Nr. de inmatriculare in Registrul comertului</mat-label>
+        <input type="text" matInput formControlName="J" />
+        <mat-error *ngIf="addIndivOrCompForm.get('J').hasError('required')">
+          Nr. de inmatriculare este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section *ngIf="isBuyerCompany">
+      <mat-form-field appearance="fill">
+        <mat-label>Codul fiscal</mat-label>
+        <input type="text" matInput formControlName="CUI" />
+        <mat-error *ngIf="addIndivOrCompForm.get('CUI').hasError('required')">
+          Codul fiscal este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Adresa</mat-label>
+        <input type="text" matInput formControlName="headquarters" />
+        <mat-error
+          *ngIf="addIndivOrCompForm.get('headquarters').hasError('required')"
+        >
+          Adresa este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Judetul</mat-label>
+        <input type="text" matInput formControlName="county" />
+        <mat-error
+          *ngIf="addIndivOrCompForm.get('county').hasError('required')"
+        >
+          Judetul este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Cont bancar</mat-label>
+        <input type="text" matInput formControlName="bankAccount" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Banca</mat-label>
+        <input type="text" matInput formControlName="bank" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input type="text" autocomplete="of" matInput formControlName="email" />
+        <mat-error *ngIf="addIndivOrCompForm.get('email').hasError('pattern')">
+          Email invalid
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Nr. telefon</mat-label>
+        <input type="text" matInput formControlName="phone" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Status</mat-label>
+        <mat-select name="status" formControlName="isActivated">
+          <mat-option
+            *ngFor="let choice of individualStatusChoices"
+            [value]="choice.value"
+          >
+            {{ choice.viewValue }}
+          </mat-option>
+        </mat-select>
+        <mat-error
+          *ngIf="addIndivOrCompForm.get('isActivated').hasError('required')"
+        >
+          Statusul este <strong>obligatoriu</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <div class="btns-container">
+        <button
+          type="submit"
+          mat-raised-button
+          color="primary"
+          [disabled]="addIndivOrCompForm.invalid || isLoading"
+        >
+          {{ addIndivOrCompFormBtnMessage }}
+        </button>
+        <button
+          type="button"
+          (click)="closeDialog()"
+          mat-raised-button
+          color="accent"
+          [disabled]="isLoading"
+        >
+          Renunta
+        </button>
+      </div>
+    </section>
+  </form>
+  <section *ngIf="!isAddFormDisplayed" class="text-center mt-1">
+    <button mat-raised-button color="accent" (click)="closeDialog()">
+      Renunta
+    </button>
+  </section>
+</main>
+
+<ng-template #notFound>
+  <p *ngIf="isNotFoundDisplayed">
+    {{
+      isBuyerCompany
+        ? "Nu am gasit nicio companie"
+        : "Nu am gasit nicio persoana fizica"
+    }}
+  </p>
+</ng-template>

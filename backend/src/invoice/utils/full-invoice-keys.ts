@@ -1,0 +1,17 @@
+export const fullInvoiceTableKeys: string[] = [
+	"typeOfInvoice",
+	"series",
+	"number",
+	"date",
+	"numberOfAccompanyingNotice",
+	"isCancelled",
+	"cancellationNotices",
+	"borderColor",
+	"paymentStatus",
+	"company.name",
+	"individual.name",
+	"totalCost",
+	"totalPayments",
+	"addedBy",
+	"editedBy",
+];

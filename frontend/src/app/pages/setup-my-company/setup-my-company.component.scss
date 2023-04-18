@@ -1,0 +1,36 @@
+@import "../../../styles/index.scss";
+
+:host {
+  section {
+    padding: 15px;
+    width: 100%;
+    form {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      width: 100%;
+      gap: 10px;
+      section {
+        width: 100%;
+        button {
+          width: 100%;
+        }
+      }
+      section.user-action-info {
+        display: flex;
+        align-self: end;
+      }
+    }
+  }
+  @media screen and (min-width: 820px) {
+    section {
+      width: 820px;
+      form {
+        section {
+          width: 32%;
+        }
+      }
+    }
+  }
+}

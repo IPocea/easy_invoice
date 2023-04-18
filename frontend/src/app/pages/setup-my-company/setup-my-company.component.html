@@ -1,0 +1,178 @@
+<ng-container *ngIf="addMyCompanyForm; else loading">
+  <section class="set-up-my-company-container">
+    <h4 class="text-center">
+      Datele societatii nu sunt setate. Te rugam sa le introduci
+    </h4>
+    <p class="text-center">
+      Campurile cu <sup class="text-danger">*</sup> sunt obligatorii
+    </p>
+    <form (ngSubmit)="addMyCompany()" [formGroup]="addMyCompanyForm">
+      <section class="form-group">
+        <label class="form-label" for="set-up-my-company-name"
+          >Numele firmei<sup class="text-danger">*</sup>:</label
+        >
+        <input
+          [ngClass]="[
+            addMyCompanyForm.get('name').hasError('required')
+              ? 'form-control border-red'
+              : 'form-control'
+          ]"
+          type="text"
+          formControlName="name"
+          id="set-up-my-company-name"
+        />
+      </section>
+      <section class="form-group">
+        <label class="form-label" for="set-up-my-company-J"
+          >Nr. de inmatriculare in Registrul comertului<sup class="text-danger"
+            >*</sup
+          >:</label
+        >
+        <input
+          [ngClass]="[
+            addMyCompanyForm.get('J').hasError('required')
+              ? 'form-control border-red'
+              : 'form-control'
+          ]"
+          type="text"
+          formControlName="J"
+          id="set-up-my-company-J"
+          placeholder="J-ul"
+        />
+      </section>
+      <section class="form-group">
+        <label class="form-label" for="set-up-my-company-CUI"
+          >Codul fiscal<sup class="text-danger">*</sup>:</label
+        >
+        <input
+          [ngClass]="[
+            addMyCompanyForm.get('CUI').hasError('required')
+              ? 'form-control border-red'
+              : 'form-control'
+          ]"
+          type="text"
+          formControlName="CUI"
+          id="set-up-my-company-CUI"
+          placeholder="CUI-ul"
+        />
+      </section>
+      <section class="form-group">
+        <label class="form-label" for="set-up-my-company-headquarters"
+          >Sediul<sup class="text-danger">*</sup>:</label
+        >
+        <input
+          [ngClass]="[
+            addMyCompanyForm.get('headquarters').hasError('required')
+              ? 'form-control border-red'
+              : 'form-control'
+          ]"
+          type="text"
+          formControlName="headquarters"
+          id="set-up-my-company-headquarters"
+          placeholder="Localitate, Strada, Numar"
+        />
+      </section>
+      <section class="form-group">
+        <label class="form-label" for="set-up-my-company-county"
+          >Judetul<sup class="text-danger">*</sup>:</label
+        >
+        <input
+          [ngClass]="[
+            addMyCompanyForm.get('county').hasError('required')
+              ? 'form-control border-red'
+              : 'form-control'
+          ]"
+          type="text"
+          formControlName="county"
+          id="set-up-my-company-county"
+        />
+      </section>
+      <section class="form-group">
+        <label class="form-label" for="set-up-my-company-bank-account"
+          >Cont bancar:</label
+        >
+        <input
+          class="form-control"
+          type="text"
+          formControlName="bankAccount"
+          id="set-up-my-company-bank-account"
+        />
+      </section>
+      <section class="form-group">
+        <label class="form-label" for="set-up-my-company-bank">Banca:</label>
+        <input
+          class="form-control"
+          type="text"
+          formControlName="bank"
+          id="set-up-my-company-bank"
+        />
+      </section>
+      <section class="form-group">
+        <label class="form-label" for="set-up-my-company-treasury"
+          >Trezorerie:</label
+        >
+        <input
+          class="form-control"
+          type="text"
+          formControlName="treasury"
+          id="set-up-my-company-treasury"
+        />
+      </section>
+      <section class="form-group">
+        <label class="form-label" for="set-up-my-company-social-capital"
+          >Capital social:</label
+        >
+        <input
+          class="form-control"
+          type="number"
+          formControlName="socialCapital"
+          id="set-up-my-company-social-capital"
+        />
+      </section>
+      <section class="form-group">
+        <label class="form-label" for="set-up-my-company-vat-rate"
+          >Cota TVA<sup class="text-danger">*</sup>:</label
+        >
+        <input
+          [ngClass]="[
+            addMyCompanyForm.get('vatRate').hasError('required')
+              ? 'form-control border-red'
+              : 'form-control'
+          ]"
+          type="number"
+          formControlName="vatRate"
+          id="set-up-my-company-vat-rate"
+        />
+      </section>
+      <section class="form-group">
+        <label class="form-label" for="set-up-my-company-delegates-name"
+          >Numele Delegatului:</label
+        >
+        <input
+          class="form-control"
+          type="text"
+          formControlName="delegatesName"
+          id="set-up-my-company-delegates-name"
+        />
+      </section>
+      <section>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="addMyCompanyForm.invalid || isLoading"
+        >
+          {{ addMyCompanyBtnMessage }}
+        </button>
+      </section>
+    </form>
+    <p *ngIf="errorMessage" class="text-center error-message">
+      {{ errorMessage }}
+    </p>
+  </section>
+</ng-container>
+
+<ng-template #loading>
+  <div class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

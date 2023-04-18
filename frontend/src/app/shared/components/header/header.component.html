@@ -1,0 +1,12 @@
+<nav>
+  <h2 routerLink="/bine-ai-venit" *ngIf="!myCompany; else myCompanyName">
+    Se incarca numele...
+  </h2>
+  <section>
+    <p (click)="logout()">Logout</p>
+  </section>
+</nav>
+
+<ng-template #myCompanyName>
+  <h2 routerLink="/bine-ai-venit">{{ myCompany.name }}</h2>
+</ng-template>

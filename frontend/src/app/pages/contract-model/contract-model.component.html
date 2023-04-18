@@ -1,0 +1,36 @@
+<section class="contract-models-container">
+  <mat-drawer-container hasBackdrop="true" *ngIf="!isLoading; else loading">
+    <mat-drawer
+      #drawer
+      (openedChange)="onOpenChange($event)"
+      mode="over"
+      position="end"
+    >
+      <app-contract-drawer
+        [models]="models"
+        [currentUser]="currentUser"
+        [selectedModel]="selectedModel"
+        [areModelsDisplayed]="areModelsDisplayed"
+        (closeDrawerEvent)="toggleDrawer($event)"
+        (sendNewModelsEventFromDrawer)="sendNewModels($event)"
+        (sendFilters)="sendFilteredModels($event)"
+      ></app-contract-drawer>
+    </mat-drawer>
+    <mat-drawer-content>
+      <app-contract-drawer-content
+        *ngIf="isDrawerContentReady"
+        [models]="models"
+        [currentUser]="currentUser"
+        [selectedModel]="selectedModel"
+        (openDrawerEvent)="toggleDrawer($event)"
+        (sendNewModelsEvent)="sendNewModels($event)"
+      ></app-contract-drawer-content>
+    </mat-drawer-content>
+  </mat-drawer-container>
+</section>
+
+<ng-template #loading>
+  <div class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

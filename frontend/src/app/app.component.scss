@@ -1,0 +1,57 @@
+@use "src/styles/index.scss" as styles;
+
+:host {
+  .main-container {
+    grid-area: main-container;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    .left-side {
+      padding-bottom: 5px;
+      background-color: styles.$primary;
+      background-image: linear-gradient(
+        to bottom right,
+        styles.$primary,
+        styles.$secondary
+      );
+      overflow: auto;
+    }
+    .right-side {
+      padding: 10px;
+      background-color: styles.$tenary;
+      color: styles.$textColor;
+      overflow: auto;
+    }
+  }
+  .main-container-not-logged-in,
+  .main-not-company-user,
+  .main-not-company-admin {
+    @include styles.fullScreenCentered();
+  }
+  .main-not-company-user,
+  .main-not-company-admin {
+    background-color: styles.$authBackgroundColor;
+    height: 100%;
+  }
+  @media screen and (min-width: 750px) {
+    .main-container {
+      height: 100%;
+    }
+  }
+  @media screen and (min-width: 820px) {
+    .main-container {
+      flex-direction: row;
+      .left-side {
+        width: 150px;
+      }
+      .right-side {
+        width: 100%;
+      }
+    }
+    .main-not-company-user,
+    .main-not-company-admin {
+      height: 100vh;
+      overflow: auto;
+    }
+  }
+}
