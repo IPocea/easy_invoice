@@ -11,6 +11,8 @@ export interface ISeller {
 	socialCapital?: number;
 	vatRate: number;
 	delegatesName?: string;
+	email?: string;
+	phone?: string;
 	invoiceId: string;
   __v?: number;
 }

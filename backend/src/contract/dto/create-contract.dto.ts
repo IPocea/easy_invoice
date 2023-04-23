@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { IContractModel } from "src/contract-model/interface/contract-model.interface";
 
 export class CreateContractDto {
 	number: string;
@@ -12,6 +13,7 @@ export class CreateContractDto {
 	paymentMethod: string;
 	deliveryTime: string;
 	content: string;
+	contractModel: IContractModel;
 	invoiceId: Types.ObjectId;
 	addedBy: string;
 	editedBy: string;

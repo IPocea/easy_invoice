@@ -50,6 +50,8 @@ export class SetupMyCompanyComponent implements OnInit {
         socialCapital: [null],
         vatRate: [null, [Validators.required, Validators.pattern(/[0-9]+/g)]],
         delegatesName: [null],
+        email: [null],
+        phone: [null],
         addedBy: [this.currentUser.firstName + ' ' + this.currentUser.lastName],
         editedBy: [null],
       });

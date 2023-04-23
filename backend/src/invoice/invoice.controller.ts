@@ -10,6 +10,7 @@ import {
 	Post,
 	Query,
 	Request,
+	Res,
 	UseGuards,
 } from "@nestjs/common";
 import { Types } from "mongoose";
@@ -19,6 +20,10 @@ import { IMessageResponse, IQueryParams } from "src/utils/shared-interface";
 import { CreateFullInvoiceDto, UpdateFullInvoiceDto } from "./dto";
 import { IInvoice, IInvoicePagination } from "./interface/invoice.interface";
 import { InvoiceService } from "./invoice.service";
+import * as puppeteer from "puppeteer";
+import * as handlebars from "handlebars";
+import * as fs from "fs";
+import { join, resolve } from "path";
 
 @Controller("invoices")
 export class InvoiceController {
@@ -37,10 +42,16 @@ export class InvoiceController {
 	@UseGuards(AccesTokenGuard)
 	@Get(":id")
 	async findOneFullData(@Param("id") invoiceId: string): Promise<IInvoice> {
-		const invoice = await this.invoiceService.findOneFullData(
-			new this.ObjectId(`${invoiceId}`)
-		);
-		return invoice;
+		try {
+			const invoice = await this.invoiceService.findOneFullData(
+				new this.ObjectId(`${invoiceId}`)
+			);
+			return invoice;
+		} catch (error) {
+			throw new NotFoundException(
+				`Nu am putut gasi factura cu id-ul ${invoiceId}`
+			);
+		}
 	}
 
 	@UseGuards(AccesTokenGuard)
@@ -135,5 +146,44 @@ export class InvoiceController {
 			);
 		await this.historyService.deleteManyByInvoiceId(invoiceId);
 		return result;
+	}
+
+	// @UseGuards(AccesTokenGuard)
+	@Get("generate-pdf/:invoiceId")
+	async generatePdf(@Param("invoiceId") invoiceId: string, @Res() res) {
+		const templateFile = fs.readFileSync(
+			join(
+				resolve(process.cwd()),
+				"src",
+				"invoice",
+				"templates",
+				"invoice.hbs"
+			),
+			"utf8"
+		);
+		const template = handlebars.compile(templateFile);
+		const data = {
+			title: "My PDF",
+			content:
+				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce tincidunt lacus et sapien scelerisque, vel venenatis enim rutrum.",
+		};
+
+		const html = template(data);
+		const browser = await puppeteer.launch();
+		const page = await browser.newPage();
+
+		await page.setContent(html);
+
+		const pdfBuffer = await page.pdf({ format: "A4" });
+
+		res.set({
+			"Content-Type": "application/pdf",
+			"Content-Disposition": `inline; filename=test.pdf`,
+			"Content-Length": pdfBuffer.length,
+		});
+
+		res.send(pdfBuffer);
+
+		await browser.close();
 	}
 }

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, Types } from "mongoose";
+import { IContractModel } from "src/contract-model/interface/contract-model.interface";
 
 export type ContractDocument = Contract & Document;
 
@@ -23,11 +24,13 @@ export class Contract {
 	installation: string;
 	@Prop()
 	paymentMethod: string;
-  @Prop()
+	@Prop()
 	deliveryTime: string;
-  @Prop()
+	@Prop()
 	content: string;
-  @Prop()
+	@Prop({ type: Object })
+	contractModel: IContractModel;
+	@Prop()
 	invoiceId: Types.ObjectId;
 	@Prop()
 	addedBy: string;

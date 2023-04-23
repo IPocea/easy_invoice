@@ -11,6 +11,8 @@ export interface IBuyer {
 	county: string;
 	bankAccount: string;
 	bank: string;
+	email?: string;
+	phone?: string;
 	invoiceId: Types.ObjectId;
   __v?: number;
 }

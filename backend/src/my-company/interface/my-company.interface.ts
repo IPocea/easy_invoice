@@ -10,6 +10,8 @@ export interface IMyCompany {
 	bank: string;
 	treasury: string;
 	delegatesName: string;
+	email?: string;
+  phone?: string;
 	addedBy: string;
 	editedBy: string;
 	__V?: number;

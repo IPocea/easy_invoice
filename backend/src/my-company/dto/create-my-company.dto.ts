@@ -9,6 +9,8 @@ export class CreateMyCompanyDto {
 	bank: string;
 	treasury: string;
 	delegatesName: string;
+	email?: string;
+  phone?: string;
 	addedBy: string;
 	editedBy: string;
 }

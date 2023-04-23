@@ -30,6 +30,10 @@ export class MyCompany {
 	@Prop()
 	editedBy: string;
 	@Prop()
+	email: string;
+	@Prop()
+	phone: string;
+	@Prop()
 	createdAt?: Date;
 }
 

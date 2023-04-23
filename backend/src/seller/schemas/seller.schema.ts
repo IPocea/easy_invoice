@@ -27,6 +27,10 @@ export class Seller {
 	vatRate: number;
 	@Prop()
 	delegatesName: string;
+	@Prop()
+	email: string;
+	@Prop()
+	phone: string;
 	@Prop({ required: true })
 	invoiceId: Types.ObjectId;
 }

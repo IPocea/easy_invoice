@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { IContractModel } from "src/contract-model/interface/contract-model.interface";
 
 export interface IContractPagination {
 	data: IContract[];
@@ -20,6 +21,7 @@ export interface IContract {
 	paymentMethod: string;
 	deliveryTime: string;
 	content: string;
+	contractModel: IContractModel;
 	invoiceId: Types.ObjectId;
 	invoice?: any;
 	addedBy: string;

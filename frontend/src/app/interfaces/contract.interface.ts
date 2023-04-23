@@ -1,3 +1,5 @@
+import { IContractModel } from "./contract-models.interface";
+
 export interface IContractPagination {
 	data: IContract[];
 	pageIndex: number;
@@ -18,6 +20,7 @@ export interface IContract {
 	paymentMethod: string;
 	deliveryTime: string;
 	content: string;
+	contractModel: IContractModel;
 	invoiceId: string;
 	invoice?: any;
 	addedBy: string;

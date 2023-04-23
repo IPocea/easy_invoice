@@ -13,5 +13,7 @@ export class UpdateSellerDto {
 	socialCapital?: number;
 	vatRate?: number;
 	delegatesName?: string;
+	email?: string;
+	phone?: string;
 	invoiceId?: Types.ObjectId;
 }

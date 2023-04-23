@@ -18,6 +18,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { AddChangeBuyerComponent } from './components/add-change-buyer/add-change-buyer.component';
 import { SelectContractModelComponent } from './components/select-contract-model/select-contract-model.component';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { SelectContractModelComponent } from './components/select-contract-model
     MatDialogModule,
     DragDropModule,
     FormsModule,
+    MatButtonToggleModule,
     QuillModule.forRoot(),
   ],
   providers: [{ provide: MAT_DATE_LOCALE, useValue: 'ro-RO' }],

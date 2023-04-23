@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { IContractModel } from "src/contract-model/interface/contract-model.interface";
 
 export class UpdateContractDto {
 	_id?: Types.ObjectId;
@@ -13,6 +14,7 @@ export class UpdateContractDto {
 	paymentMethod?: string;
 	deliveryTime?: string;
 	content?: string;
+	contractModel?: IContractModel;
 	invoiceId?: Types.ObjectId;
 	addedBy?: string;
 	editedBy?: string;

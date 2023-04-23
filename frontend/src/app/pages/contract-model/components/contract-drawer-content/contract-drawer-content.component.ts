@@ -224,7 +224,7 @@ export class ContractDrawerContentComponent implements OnInit {
     let areUnacceptedFields: boolean = false;
     if (allFields) {
       for (const field of allFields) {
-        if (!this.acceptedFields.includes(field)) {
+        if (!this.acceptedFields.includes(field.toLowerCase())) {
           const pattern = new RegExp(field, 'gi');
           content = content.replace(
             pattern,

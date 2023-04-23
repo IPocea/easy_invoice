@@ -70,9 +70,11 @@ export class MyCompanyComponent implements OnInit {
               socialCapital: [this.myCompany.socialCapital],
               vatRate: [this.myCompany.vatRate, [Validators.required]],
               delegatesName: [this.myCompany.delegatesName],
+              email: [this.myCompany.email],
+              phone: [this.myCompany.phone],
               addedBy: [this.myCompany.addedBy],
               editedBy: [
-                this.currentUser.firstName + ' ' + this.currentUser.lastName
+                this.currentUser.firstName + ' ' + this.currentUser.lastName,
               ],
             });
           }

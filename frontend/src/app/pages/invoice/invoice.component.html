@@ -41,7 +41,8 @@
           color="primary"
           (click)="selectContractModel()"
         >
-          {{ addEditInvoiceForm.value.contract.content.name }} <sup>*</sup>
+          {{ addEditInvoiceForm.value.contract.contractModel.name }}
+          <sup>*</sup>
         </button>
       </section>
     </article>
@@ -216,6 +217,38 @@
         formControlName="restOfPayment"
       ></quill-editor>
     </article>
+    <article formGroupName="invoice">
+      <mat-button-toggle-group
+        formControlName="borderColor"
+        aria-label="Border Color"
+        [value]="currentInvoice ? currentInvoice.borderColor : '#0000FF'"
+      >
+        <mat-button-toggle value="#0000FF" class="background-blue"
+          ><mat-icon
+            class="color-white"
+            matTooltip="Culoare factura"
+            matTooltipPosition="below"
+            >info</mat-icon
+          ></mat-button-toggle
+        >
+        <mat-button-toggle value="#FF0000" class="background-red"
+          ><mat-icon
+            matTooltip="Culoare factura"
+            matTooltipPosition="below"
+            class="color-white"
+            >info</mat-icon
+          ></mat-button-toggle
+        >
+        <mat-button-toggle value="#008000" class="background-green"
+          ><mat-icon
+            matTooltip="Culoare factura"
+            matTooltipPosition="below"
+            class="color-white"
+            >info</mat-icon
+          ></mat-button-toggle
+        >
+      </mat-button-toggle-group>
+    </article>
     <article>
       <header>
         <button
@@ -225,6 +258,11 @@
           color="primary"
         >
           Adauga produs
+        </button>
+        <div class="total-box">Total: {{ totalRate }}</div>
+        <div class="total-box">Total TVA: {{ totalVatRate }}</div>
+        <button *ngIf="currentInvoice" type="button" mat-raised-button>
+          Vizualizeaza Factura
         </button>
       </header>
       <ng-container *ngIf="addEditInvoiceForm">
@@ -243,6 +281,11 @@
                 [id]="'name' + i"
                 autocomplete="off"
               />
+              <mat-error
+                *ngIf="products.controls[i].get('name').hasError('required')"
+              >
+                Denumirea produsului este <strong>obligatorie</strong>
+              </mat-error>
             </mat-form-field>
             <mat-form-field appearance="fill">
               <mat-label>U.M.</mat-label>
@@ -262,6 +305,10 @@
                 formControlName="quantity"
                 [id]="'quantity' + i"
                 autocomplete="off"
+                (keyup)="handleProductInputs('quantity', i)"
+                (paste)="handleProductInputs('quantity', i)"
+                (cut)="handleProductInputs('quantity', i)"
+                (change)="handleProductInputs('quantity', i)"
               />
             </mat-form-field>
             <mat-form-field appearance="fill">
@@ -272,6 +319,10 @@
                 formControlName="unitPrice"
                 [id]="'unitPrice' + i"
                 autocomplete="off"
+                (keyup)="handleProductInputs('unitPrice', i)"
+                (paste)="handleProductInputs('unitPrice', i)"
+                (cut)="handleProductInputs('unitPrice', i)"
+                (change)="handleProductInputs('unitPrice', i)"
               />
             </mat-form-field>
             <button

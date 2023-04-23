@@ -11,5 +11,7 @@ export class UpdateBuyerDto {
 	county?: string;
 	bankAccount?: string;
 	bank?: string;
+	email?: string;
+	phone?: string;
 	invoiceId?: Types.ObjectId;
 }

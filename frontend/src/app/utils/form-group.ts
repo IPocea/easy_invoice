@@ -1,4 +1,4 @@
-import { FormGroup } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
 
 export function cleanForm(formGroup: FormGroup): void {
   Object.keys(formGroup.controls).forEach((key) => {
@@ -17,4 +17,15 @@ export function getPasswordToolTip(): string {
 
 export function getUsernameToolTip(): string {
   return 'Username-ul trebuie sa aiba minim 6 caractere si poate contine literele, cifrele, punctul, cratima si underscore';
+}
+
+export function findInvalidControls(formGroup: FormGroup | FormArray): FormGroup["controls"][] {
+  const invalid = [];
+  const controls = formGroup.controls;
+  for (const name in controls) {
+    if (controls[name].invalid) {
+      invalid.push(name);
+    }
+  }
+  return invalid;
 }

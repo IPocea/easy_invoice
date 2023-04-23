@@ -23,6 +23,10 @@ export class Buyer {
 	bankAccount: string;
 	@Prop()
 	bank: string;
+	@Prop()
+	email: string;
+	@Prop()
+	phone: string;
 	@Prop({ required: true })
 	invoiceId: Types.ObjectId;
 }
