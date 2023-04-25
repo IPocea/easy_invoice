@@ -1,10 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import mongoose, { Model } from "mongoose";
+import mongoose, { Model, Types } from "mongoose";
 import { IMessageResponse } from "src/utils/shared-interface";
 import { CreatePaymentDto } from "./dto";
 import { IPayment } from "./interface/payment.interface";
 import { Payment, PaymentDocument } from "./schemas/payment.schema";
+import { multiply } from "src/utils/shared-operators";
+import { getAllOfInvoiceAggArray, getOneByIdAggArray } from "./utils";
 
 @Injectable()
 export class PaymentService {
@@ -15,11 +17,10 @@ export class PaymentService {
 		private paymentModel: Model<PaymentDocument>
 	) {}
 
-	async findAllOfInvoice(invoiceId: string): Promise<IPayment[]> {
+	async findAllOfInvoice(invoiceId: Types.ObjectId): Promise<IPayment[]> {
 		try {
-			return await this.paymentModel.find({
-				invoiceId: new this.ObjectId(`${invoiceId}`),
-			});
+			const aggrArray = getAllOfInvoiceAggArray(invoiceId);
+			return await this.paymentModel.aggregate(aggrArray);
 		} catch (error) {
 			return null;
 		}
@@ -27,6 +28,7 @@ export class PaymentService {
 
 	async create(newPayment: CreatePaymentDto): Promise<IPayment> {
 		try {
+			newPayment.paymentAmount = multiply(newPayment.paymentAmount, 100);
 			const createdPayment = new this.paymentModel(newPayment);
 			return await createdPayment.save();
 		} catch (error) {
@@ -34,9 +36,10 @@ export class PaymentService {
 		}
 	}
 
-	async findOne(query: object): Promise<IPayment> {
+	async findOne(paymentId: Types.ObjectId): Promise<IPayment> {
 		try {
-			const payment = await this.paymentModel.findOne(query);
+			const aggrArray = getOneByIdAggArray(paymentId);
+			const payment = await this.paymentModel.aggregate(aggrArray)[0];
 			return payment;
 		} catch (error) {
 			return null;

@@ -42,17 +42,27 @@ export const allInvoiceAggrArray: any = [
 	{
 		$addFields: {
 			totalCost: {
-				$sum: {
-					$map: {
-						input: "$products",
-						in: {
-							$multiply: ["$$this.quantity", "$$this.unitPrice"],
+				$divide: [
+					{
+						$sum: {
+							$map: {
+								input: "$products",
+								in: {
+									$multiply: ["$$this.quantity", "$$this.unitPrice"],
+								},
+							},
 						},
 					},
-				},
+					100,
+				],
 			},
 			totalPayments: {
-				$sum: "$payments.paymentAmount",
+				$divide: [
+					{
+						$sum: "$payments.paymentAmount",
+					},
+					100,
+				],
 			},
 		},
 	},
@@ -68,7 +78,22 @@ export const allInvoiceAggrArray: any = [
 			contract: {
 				$arrayElemAt: ["$contract", 0],
 			},
-			payments: 1,
+			payments: {
+				$map: {
+					input: "$payments",
+					in: {
+						_id: "$$this._id",
+						invoiceId: "$$this.invoiceId",
+						addedBy: "$$this.addedBy",
+						editedBy: "$$this.editedBy",
+						createdAt: "$$this.createdAt",
+						updatedAt: "$$this.updatedAt",
+						paymentAmount: {
+							$divide: ["$$this.paymentAmount", 100],
+						},
+					},
+				},
+			},
 			products: 1,
 			totalCost: 1,
 			totalPayments: 1,

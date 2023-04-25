@@ -11,3 +11,8 @@ export interface IContractModelResponse {
 	models: IContractModel[];
 	model: IContractModel;
 }
+
+export interface IContractModelPdfContent {
+	title: string;
+	content: string;
+}

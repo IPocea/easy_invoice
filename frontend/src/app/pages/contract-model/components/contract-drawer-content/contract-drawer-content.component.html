@@ -52,6 +52,7 @@
         type="button"
         mat-raised-button
         matTooltip="Previzualizeaza"
+        [disabled]="isLoading"
       >
         <mat-icon>visibility</mat-icon>
       </button>
@@ -287,12 +288,4 @@
       </div>
     </section>
   </footer>
-  <div id="model-contract-pdf-container">
-    <quill-editor
-      [(ngModel)]="addEditContractModelForm.value.content"
-      [readOnly]="true"
-      [modules]="{toolbar: false}"
-      [styles]="{border: 'none'}"
-    ></quill-editor>
-  </div>
 </section>

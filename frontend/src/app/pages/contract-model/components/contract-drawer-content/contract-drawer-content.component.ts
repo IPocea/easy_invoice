@@ -8,11 +8,18 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IContractModel, IContractModelResponse, IUser } from '@interfaces';
+import {
+  IContractModel,
+  IContractModelResponse,
+  ITokens,
+  IUser,
+} from '@interfaces';
 import {
   ContractModelService,
+  LoginDataService,
   NotificationService,
   StorageService,
+  TokenService,
 } from '@services';
 import {
   quillBasicModule,
@@ -24,6 +31,8 @@ import { QuillEditorComponent } from 'ngx-quill';
 import Quill from 'quill';
 import { finalize, take } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 class PreserveWhiteSpace {
   constructor(private quill: any, private options: {}) {
@@ -65,7 +74,10 @@ export class ContractDrawerContentComponent implements OnInit {
     private fb: FormBuilder,
     private notificationService: NotificationService,
     private contractModelService: ContractModelService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private tokenService: TokenService,
+    private loginDataService: LoginDataService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -99,7 +111,8 @@ export class ContractDrawerContentComponent implements OnInit {
   }
 
   previewModel() {
-    window.print();
+    this.isLoading = true;
+    this.refreshToken();
   }
 
   openDrawer(): void {
@@ -176,6 +189,24 @@ export class ContractDrawerContentComponent implements OnInit {
       });
   }
 
+  private generatePdf(): void {
+    this.contractModelService
+      .getContractModelUrl(this.addEditContractModelForm.value)
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.isLoading = false;
+        })
+      )
+      .subscribe({
+        next: (data: Blob) => {
+          const file = new Blob([data], { type: 'application/pdf' });
+          const fileURL = URL.createObjectURL(file);
+          window.open(fileURL, '_blank');
+        },
+        error: (err) => {},
+      });
+  }
   private setForm(): void {
     if (this.selectedModel) {
       this.addEditBtnValue = 'Editeaza model';
@@ -239,5 +270,34 @@ export class ContractDrawerContentComponent implements OnInit {
           'Ai adaugat campuri neexistente. Le poti identifica evidentiate cu fundalul rosu. ';
       }
     }
+  }
+
+  private refreshToken(): void {
+    const tokens: ITokens = this.storageService.getItem('tokens') as ITokens;
+    this.tokenService
+      .useRefreshToken(tokens.refreshToken)
+      .pipe(take(1))
+      .subscribe({
+        next: (tokens) => {
+          this.storageService.setItem('tokens', tokens);
+          this.generatePdf();
+        },
+        error: (err) => {
+          if (
+            err instanceof HttpErrorResponse &&
+            err.status === 498 &&
+            (err.error.error === 'Tokenul refresh a expirat' ||
+              err.error.error === 'Acces interzis')
+          ) {
+            this.storageService.removeItem('tokens');
+            this.loginDataService.setNextLoggedUser(null);
+            this.router.navigate(['/login']);
+            this.notificationService.error(
+              err.error.error + '. Te rugam sa te loghezi'
+            );
+          }
+          this.isLoading = false;
+        },
+      });
   }
 }

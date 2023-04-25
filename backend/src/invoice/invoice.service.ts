@@ -16,6 +16,7 @@ import { Invoice } from "./schemas/invoice.schema";
 import { getFullInvoicePagination } from "./utils/invoice-pagination";
 import { getSglInvoiceAggrArray } from "./utils/single-invoice-aggregation-array";
 import { ContractService } from "src/contract/contract.service";
+import { multiply } from "src/utils/shared-operators";
 
 @Injectable()
 export class InvoiceService {
@@ -32,6 +33,7 @@ export class InvoiceService {
 		return await getFullInvoicePagination(this.invoiceModel, query);
 	}
 
+	// used so far only in middleware to check for duplicate number of invoice
 	async findOne(query: Object): Promise<IInvoice> {
 		try {
 			return await this.invoiceModel.findOne(query);
@@ -65,6 +67,7 @@ export class InvoiceService {
 			if (buyer && seller && contract) {
 				for (const productDto of newFullInvoice.products) {
 					productDto.invoiceId = invoice._id;
+					productDto.unitPrice = multiply(productDto.unitPrice, 100);
 					await this.productService.create(productDto);
 				}
 				return await this.findOneFullData(invoice._id);
@@ -111,6 +114,7 @@ export class InvoiceService {
 			);
 
 			for (const product of updateFullInvoice.products) {
+				product.unitPrice = multiply(product.unitPrice, 100);
 				if (product._id) {
 					product._id = new this.ObjectId(`${product._id}`);
 					await this.productService.updateOne(product._id, product);

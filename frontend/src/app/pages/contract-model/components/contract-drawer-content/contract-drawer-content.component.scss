@@ -86,14 +86,14 @@
     }
   }
 
-  @media print {
-    section > *:not(#model-contract-pdf-container) {
-      display: none;
-    }
+  // @media print {
+  //   section > *:not(#model-contract-pdf-container) {
+  //     display: none;
+  //   }
 
-    #model-contract-pdf-container {
-      display: block;
-      background-color: #fff;
-    }
-  }
+  //   #model-contract-pdf-container {
+  //     display: block;
+  //     background-color: #fff;
+  //   }
+  // }
 }

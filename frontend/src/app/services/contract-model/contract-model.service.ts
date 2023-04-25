@@ -22,6 +22,14 @@ export class ContractModelService {
     );
   }
 
+  getContractModelUrl(pdfContent): Observable<any> {
+    return this.http.post<any>(
+      environment.baseUrl + 'contract-models/show-contract-model/as-pdf',
+      pdfContent,
+      { responseType: 'blob' as 'json' }
+    );
+  }
+
   addContractModel(
     contractModel: IContractModel
   ): Observable<IContractModelResponse> {

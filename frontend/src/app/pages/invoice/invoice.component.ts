@@ -7,7 +7,6 @@ import {
   IContractModel,
   IMyCompany,
   IProduct,
-  IStatusChoices,
   IUser,
 } from '@interfaces';
 import {
@@ -34,6 +33,7 @@ import {
   substract,
 } from '@utils/index';
 import { environment } from '../../../environments/environment';
+import { replaceContractVarFunc, setBuyerFormFunc, setFormFunc } from './utils';
 
 class PreserveWhiteSpace {
   constructor(private quill: any, private options: {}) {
@@ -56,7 +56,6 @@ export class InvoiceComponent implements OnInit {
   addEditInvoiceBtnMessage: string = '';
   doesInvoiceBelongsToCompany: boolean = true;
   selectedContractModel: IContractModel = null;
-  newContractContent: string = '';
   contractModels: IContractModel[] = [];
   currentInvoice: IInvoice = null;
   currentUser: IUser = null;
@@ -325,7 +324,7 @@ export class InvoiceComponent implements OnInit {
     });
   }
 
-  private getExistingProducts(products: IProduct[]): any {
+  private getExistingProducts(products: IProduct[]): FormGroup[] {
     const result: FormGroup[] = [];
     if (products && products.length) {
       for (const product of products) {
@@ -381,589 +380,50 @@ export class InvoiceComponent implements OnInit {
   }
 
   private replaceContractVars(): void {
-    this.newContractContent = this.selectedContractModel.content;
+    let newContractContent = this.selectedContractModel.content;
     for (let variable of environment.contractModels.acceptedFields) {
-      this.replaceContractVar(variable);
+      newContractContent = this.replaceContractVar(
+        variable,
+        newContractContent
+      );
     }
     this.addEditInvoiceForm.controls['contract'].patchValue({
-      content: this.newContractContent,
+      content: newContractContent,
     });
   }
 
-  private replaceContractVar(variable: string): void {
-    const regExp = new RegExp(variable, 'gi');
-    switch (variable.toLowerCase()) {
-      case '{nume-furnizor}':
-        const sellerName = this.addEditInvoiceForm.value.seller.name
-          ? this.addEditInvoiceForm.value.seller.name
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          sellerName
-        );
-        break;
-      case '{j-furnizor}':
-        const sellerJ = this.addEditInvoiceForm.value.seller.J
-          ? this.addEditInvoiceForm.value.seller.J
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          sellerJ
-        );
-        break;
-      case '{cui-furnizor}':
-        const sellerCUI = this.addEditInvoiceForm.value.seller.CUI
-          ? this.addEditInvoiceForm.value.seller.CUI
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          sellerCUI
-        );
-        break;
-      case '{sediu-furnizor}':
-        const sellerHeadquarters = this.addEditInvoiceForm.value.seller
-          .headquarters
-          ? this.addEditInvoiceForm.value.seller.headquarters
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          sellerHeadquarters
-        );
-        break;
-      case '{judet-furnizor}':
-        const sellerCounty = this.addEditInvoiceForm.value.seller.county
-          ? this.addEditInvoiceForm.value.seller.county
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          sellerCounty
-        );
-        break;
-      case '{cont-bancar-furnizor}':
-        const sellerBankAccount = this.addEditInvoiceForm.value.seller
-          .bankAccount
-          ? this.addEditInvoiceForm.value.seller.bankAccount
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          sellerBankAccount
-        );
-        break;
-      case '{banca-furnizor}':
-        const sellerBank = this.addEditInvoiceForm.value.seller.bank
-          ? this.addEditInvoiceForm.value.seller.bank
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          sellerBank
-        );
-        break;
-      case '{email-furnizor}':
-        const sellerEmail = this.addEditInvoiceForm.value.seller.email
-          ? this.addEditInvoiceForm.value.seller.email
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          sellerEmail
-        );
-        break;
-      case '{telefon-furnizor}':
-        const sellerPhone = this.addEditInvoiceForm.value.seller.phone
-          ? this.addEditInvoiceForm.value.seller.phone
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          sellerPhone
-        );
-        break;
-      case '{delegat-furnizor}':
-        const sellerDelName = this.addEditInvoiceForm.value.seller.delegatesName
-          ? this.addEditInvoiceForm.value.seller.delegatesName
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          sellerDelName
-        );
-        break;
-      case '{nume-client}':
-        const buyerName = this.addEditInvoiceForm.value.buyer.name
-          ? this.addEditInvoiceForm.value.buyer.name
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          buyerName
-        );
-        break;
-      case '{j/serie-client}':
-        let JSeries = this.doesInvoiceBelongsToCompany
-          ? this.addEditInvoiceForm.value.buyer.J
-          : this.addEditInvoiceForm.value.buyer.series;
-        JSeries = JSeries ? JSeries : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          JSeries
-        );
-        break;
-      case '{cui/cnp-client}':
-        let CUICNP = this.doesInvoiceBelongsToCompany
-          ? this.addEditInvoiceForm.value.buyer.CUI
-          : this.addEditInvoiceForm.value.buyer.CNP;
-        CUICNP = CUICNP ? CUICNP : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          CUICNP
-        );
-        break;
-      case '{sediu-client}':
-        const buyerHeadquarter = this.addEditInvoiceForm.value.buyer
-          .headquarters
-          ? this.addEditInvoiceForm.value.buyer.headquarters
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          buyerHeadquarter
-        );
-        break;
-      case '{judet-client}':
-        const buyerCounty = this.addEditInvoiceForm.value.buyer.county
-          ? this.addEditInvoiceForm.value.buyer.county
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          buyerCounty
-        );
-        break;
-      case '{cont-bancar-client}':
-        const buyerBankAccount = this.addEditInvoiceForm.value.buyer.bankAccount
-          ? this.addEditInvoiceForm.value.buyer.bankAccount
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          buyerBankAccount
-        );
-        break;
-      case '{banca-client}':
-        const buyerBank = this.addEditInvoiceForm.value.buyer.bank
-          ? this.addEditInvoiceForm.value.buyer.bank
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          buyerBank
-        );
-        break;
-      case '{email-client}':
-        const buyerEmail = this.addEditInvoiceForm.value.buyer.email
-          ? this.addEditInvoiceForm.value.buyer.email
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          buyerEmail
-        );
-        break;
-      case '{telefon-client}':
-        const buyerPhone = this.addEditInvoiceForm.value.buyer.phone
-          ? this.addEditInvoiceForm.value.buyer.phone
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          buyerPhone
-        );
-        break;
-      case '{numar-contract}':
-        const contractNumber = this.addEditInvoiceForm.value.contract.number
-          ? this.addEditInvoiceForm.value.contract.number
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          contractNumber
-        );
-        break;
-      case '{data-contract}':
-        let contractDate = this.addEditInvoiceForm.value.invoice.date
-          ? this.addEditInvoiceForm.value.invoice.date
-          : '';
-        if (contractDate) {
-          const selectedDate = new Date(contractDate);
-          const day =
-            selectedDate.getDate() < 10
-              ? '0' + selectedDate.getDate()
-              : selectedDate.getDate();
-          const month =
-            selectedDate.getMonth() + 1 < 10
-              ? '0' + (selectedDate.getMonth() + 1)
-              : selectedDate.getMonth() + 1;
-          const year = selectedDate.getFullYear();
-          contractDate = `${day}.${month}.${year}`;
-        }
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          contractDate
-        );
-        break;
-      case '{obiect-contract}':
-        const contractSubjectOfContract = this.addEditInvoiceForm.value.contract
-          .subjectOfContract
-          ? this.addEditInvoiceForm.value.contract.subjectOfContract
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          contractSubjectOfContract
-        );
-        break;
-      case '{produse-contract}':
-        let productsNameList = '<ul>';
-        for (let product of this.products.controls) {
-          productsNameList += `<li>${product.value.name}</li>`;
-        }
-        productsNameList += '</ul>';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          productsNameList
-        );
-        break;
-      case '{valoare-contract}':
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          this.totalRate.toString()
-        );
-        break;
-      case '{avans-contract}':
-        const contractPaymentAdvance = this.addEditInvoiceForm.value.contract
-          .paymentAdvance
-          ? this.addEditInvoiceForm.value.contract.paymentAdvance
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          contractPaymentAdvance
-        );
-        break;
-      case '{rest-plata-contract}':
-        const contractRestOfPayment = this.addEditInvoiceForm.value.contract
-          .restOfPayment
-          ? this.addEditInvoiceForm.value.contract.restOfPayment
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          contractRestOfPayment
-        );
-        break;
-      case '{metoda-plata-contract}':
-        const contractPaymentMethod = this.addEditInvoiceForm.value.contract
-          .paymentMethod
-          ? this.addEditInvoiceForm.value.contract.paymentMethod
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          contractPaymentMethod
-        );
-        break;
-      case '{transport-contract}':
-        const contractTransport = this.addEditInvoiceForm.value.contract
-          .transport
-          ? this.addEditInvoiceForm.value.contract.transport
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          contractTransport
-        );
-        break;
-      case '{montaj-contract}':
-        const contractInstallation = this.addEditInvoiceForm.value.contract
-          .installation
-          ? this.addEditInvoiceForm.value.contract.installation
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          contractInstallation
-        );
-        break;
-      case '{termen-livrare-contract}':
-        const contractDeliveryTime = this.addEditInvoiceForm.value.contract
-          .deliveryTime
-          ? this.addEditInvoiceForm.value.contract.deliveryTime
-          : '';
-        this.newContractContent = this.newContractContent.replace(
-          regExp,
-          contractDeliveryTime
-        );
-        break;
-      default:
-        break;
-    }
+  private replaceContractVar(
+    variable: string,
+    newContractContent: string
+  ): string {
+    return replaceContractVarFunc(
+      variable,
+      this.addEditInvoiceForm,
+      newContractContent,
+      this.doesInvoiceBelongsToCompany,
+      this.products,
+      this.totalRate
+    );
   }
 
   private setForm(): void {
-    this.addEditInvoiceForm = this.fb.group({
-      invoice: this.doesInvoiceBelongsToCompany
-        ? this.fb.group({
-            typeOfInvoice: [
-              this.currentInvoice ? this.currentInvoice.typeOfInvoice : null,
-              [Validators.required],
-            ],
-            series: [
-              this.currentInvoice ? this.currentInvoice.series : null,
-              [Validators.required],
-            ],
-            number: [
-              this.currentInvoice ? this.currentInvoice.number : null,
-              [Validators.required],
-            ],
-            date: [
-              this.currentInvoice
-                ? new Date(this.currentInvoice.date)
-                : new Date(),
-              [Validators.required],
-            ],
-            numberOfAccompanyingNotice: [
-              this.currentInvoice
-                ? this.currentInvoice.numberOfAccompanyingNotice
-                : null,
-            ],
-            isCancelled: [
-              this.currentInvoice ? this.currentInvoice.isCancelled : false,
-            ],
-            cancellationNotices: [
-              this.currentInvoice
-                ? this.currentInvoice.cancellationNotices
-                : null,
-            ],
-            borderColor: [
-              this.currentInvoice ? this.currentInvoice.borderColor : '#0000FF',
-            ],
-            paymentStatus: [
-              this.currentInvoice ? this.currentInvoice.paymentStatus : false,
-            ],
-            companyId: [
-              this.currentInvoice ? this.currentInvoice.companyId : null,
-            ],
-            addedBy: [
-              this.currentInvoice
-                ? this.currentInvoice.addedBy
-                : this.currentUser.firstName + ' ' + this.currentUser.lastName,
-              [Validators.required],
-            ],
-            editedBy: [
-              this.currentInvoice ? this.currentInvoice.editedBy : null,
-            ],
-          })
-        : this.fb.group({
-            typeOfInvoice: [
-              this.currentInvoice ? this.currentInvoice.typeOfInvoice : null,
-              [Validators.required],
-            ],
-            series: [
-              this.currentInvoice ? this.currentInvoice.series : null,
-              [Validators.required],
-            ],
-            number: [
-              this.currentInvoice ? this.currentInvoice.number : null,
-              [Validators.required],
-            ],
-            date: [
-              this.currentInvoice ? this.currentInvoice.date : null,
-              [Validators.required],
-            ],
-            numberOfAccompanyingNotice: [
-              this.currentInvoice
-                ? this.currentInvoice.numberOfAccompanyingNotice
-                : null,
-            ],
-            isCancelled: [
-              this.currentInvoice ? this.currentInvoice.isCancelled : false,
-            ],
-            cancellationNotices: [
-              this.currentInvoice
-                ? this.currentInvoice.cancellationNotices
-                : null,
-            ],
-            borderColor: [
-              this.currentInvoice ? this.currentInvoice.borderColor : '#0000FF',
-            ],
-            paymentStatus: [
-              this.currentInvoice ? this.currentInvoice.paymentStatus : false,
-            ],
-            individualId: [
-              this.currentInvoice ? this.currentInvoice.individualId : null,
-              [Validators.required],
-            ],
-            addedBy: [
-              this.currentInvoice
-                ? this.currentInvoice.addedBy
-                : this.currentUser.firstName + ' ' + this.currentUser.lastName,
-              [Validators.required],
-            ],
-            editedBy: [
-              this.currentInvoice ? this.currentInvoice.editedBy : null,
-            ],
-          }),
-      buyer: this.doesInvoiceBelongsToCompany
-        ? this.fb.group({
-            name: [
-              this.currentInvoice ? this.currentInvoice.buyer.name : null,
-              [Validators.required],
-            ],
-            J: [
-              this.currentInvoice ? this.currentInvoice.buyer.J : null,
-              [Validators.required],
-            ],
-            CUI: [
-              this.currentInvoice ? this.currentInvoice.buyer.CUI : null,
-              [Validators.required],
-            ],
-            headquarters: [
-              this.currentInvoice
-                ? this.currentInvoice.buyer.headquarters
-                : null,
-              [Validators.required],
-            ],
-            county: [
-              this.currentInvoice ? this.currentInvoice.buyer.county : null,
-              [Validators.required],
-            ],
-            bankAccount: [
-              this.currentInvoice
-                ? this.currentInvoice.buyer.bankAccount
-                : null,
-            ],
-            bank: [this.currentInvoice ? this.currentInvoice.buyer.bank : null],
-            _id: [this.currentInvoice ? this.currentInvoice.buyer._id : null],
-          })
-        : this.fb.group({
-            name: [
-              this.currentInvoice ? this.currentInvoice.buyer.name : null,
-              [Validators.required],
-            ],
-            series: [
-              this.currentInvoice ? this.currentInvoice.buyer.series : null,
-              [Validators.required],
-            ],
-            CNP: [
-              this.currentInvoice ? this.currentInvoice.buyer.CNP : null,
-              [Validators.required],
-            ],
-            headquarters: [
-              this.currentInvoice
-                ? this.currentInvoice.buyer.headquarters
-                : null,
-              [Validators.required],
-            ],
-            county: [
-              this.currentInvoice ? this.currentInvoice.buyer.county : null,
-              [Validators.required],
-            ],
-            bankAccount: [
-              this.currentInvoice
-                ? this.currentInvoice.buyer.bankAccount
-                : null,
-            ],
-            bank: [this.currentInvoice ? this.currentInvoice.buyer.bank : null],
-            _id: [this.currentInvoice ? this.currentInvoice.buyer._id : null],
-          }),
-      seller: this.fb.group({
-        name: [this.myCompany.name, [Validators.required]],
-        J: [this.myCompany.J, [Validators.required]],
-        CUI: [this.myCompany.CUI, [Validators.required]],
-        headquarters: [this.myCompany.headquarters, [Validators.required]],
-        county: [this.myCompany.county, [Validators.required]],
-        bankAccount: [this.myCompany.bankAccount],
-        bank: [this.myCompany.bank],
-        treasury: [this.myCompany.treasury],
-        socialCapital: [this.myCompany.socialCapital],
-        vatRate: [this.myCompany.vatRate, [Validators.required]],
-        delegatesName: [this.myCompany.delegatesName],
-        email: [this.myCompany.email],
-        phone: [this.myCompany.phone],
-        _id: [this.myCompany._id],
-      }),
-      contract: this.fb.group({
-        number: [
-          this.currentInvoice ? this.currentInvoice.contract.number : null,
-          [Validators.required],
-        ],
-        subjectOfContract: [
-          this.currentInvoice
-            ? this.currentInvoice.contract.subjectOfContract
-            : null,
-          [Validators.required],
-        ],
-        paymentAdvance: [
-          this.currentInvoice
-            ? this.currentInvoice.contract.paymentAdvance
-            : null,
-        ],
-        restOfPayment: [
-          this.currentInvoice
-            ? this.currentInvoice.contract.restOfPayment
-            : null,
-        ],
-        transport: [
-          this.currentInvoice ? this.currentInvoice.contract.transport : null,
-        ],
-        installation: [
-          this.currentInvoice
-            ? this.currentInvoice.contract.installation
-            : null,
-        ],
-        paymentMethod: [
-          this.currentInvoice
-            ? this.currentInvoice.contract.paymentMethod
-            : null,
-        ],
-        deliveryTime: [
-          this.currentInvoice
-            ? this.currentInvoice.contract.deliveryTime
-            : null,
-        ],
-        content: [
-          this.currentInvoice
-            ? this.currentInvoice.contract.content
-            : this.selectedContractModel.content,
-        ],
-        contractModel: [
-          this.currentInvoice
-            ? this.currentInvoice.contract.contractModel
-            : this.selectedContractModel,
-        ],
-        addedBy: [
-          this.currentInvoice
-            ? this.currentInvoice.addedBy
-            : this.currentUser.firstName + ' ' + this.currentUser.lastName,
-          [Validators.required],
-        ],
-        editedBy: [this.currentInvoice ? this.currentInvoice.editedBy : null],
-      }),
-      products: this.fb.array(
-        this.getExistingProducts(
-          this.currentInvoice ? this.currentInvoice.products : []
-        ),
-        [Validators.required]
-      ),
-    });
+    const existingProducts: FormGroup[] = this.getExistingProducts(
+      this.currentInvoice ? this.currentInvoice.products : []
+    );
+    this.addEditInvoiceForm = setFormFunc(
+      this.fb,
+      this.doesInvoiceBelongsToCompany,
+      this.currentInvoice,
+      this.selectedContractModel,
+      this.currentUser,
+      this.myCompany,
+      existingProducts
+    );
   }
 
   private setBuyerForm(buyer: IBuyer): void {
     // first save the buyerGroup into a variable
-    const buyerGroup = buyer.hasOwnProperty('CUI')
-      ? this.fb.group({
-          name: [buyer.name, [Validators.required]],
-          J: [buyer.J, [Validators.required]],
-          CUI: [buyer.CUI, [Validators.required]],
-          headquarters: [buyer.headquarters, [Validators.required]],
-          county: [buyer.county, [Validators.required]],
-          bankAccount: [buyer.bankAccount],
-          bank: [buyer.bank],
-          _id: [this.currentInvoice ? this.currentInvoice.buyer._id : null],
-        })
-      : this.fb.group({
-          name: [buyer.name, [Validators.required]],
-          series: [buyer.series, [Validators.required]],
-          CNP: [buyer.CNP, [Validators.required]],
-          headquarters: [buyer.headquarters, [Validators.required]],
-          county: [buyer.county, [Validators.required]],
-          bankAccount: [buyer.bankAccount],
-          bank: [buyer.bank],
-          _id: [this.currentInvoice ? this.currentInvoice.buyer._id : null],
-        });
+    const buyerGroup = setBuyerFormFunc(buyer, this.fb, this.currentInvoice);
     // change the buyer grup
     this.addEditInvoiceForm.controls['buyer'] = buyerGroup;
     // change the values of buyer to buyerGroup.value

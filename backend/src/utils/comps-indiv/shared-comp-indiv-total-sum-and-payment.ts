@@ -1,9 +1,9 @@
-export const aggregationArray: object[] = [
+export const getCompIndivAggArray = (documentType: string): object[] => [
 	{
 		$lookup: {
 			from: "invoices",
 			localField: "_id",
-			foreignField: "companyId",
+			foreignField: documentType === "company" ? "companyId" : "individualId",
 			as: "paymentData",
 			pipeline: [
 				{
@@ -66,6 +66,12 @@ export const aggregationArray: object[] = [
 				{
 					$project: {
 						_id: 0,
+						totalSum: {
+							$divide: ["$totalSum", 100],
+						},
+						totalPayment: {
+							$divide: ["$totalPayment", 100],
+						},
 					},
 				},
 			],

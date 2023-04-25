@@ -1,6 +1,6 @@
 import { IQueryParams } from "../shared-interface";
 import { getObjectKeys } from "./shared-comp-indiv-keys";
-import { aggregationArray } from "./shared-comp-indiv-total-sum-and-payment";
+import { getCompIndivAggArray } from "./shared-comp-indiv-total-sum-and-payment";
 
 export const getCompIndivPagination = async (
 	model: any,
@@ -10,6 +10,7 @@ export const getCompIndivPagination = async (
 	const pageIndex: number = parseInt(query.pageIndex) || 0;
 	const limit: number = parseInt(query.pageSize) || 10;
 	const options = [];
+	const aggregationArray = getCompIndivAggArray(documentType);
 
 	if (query.searchValue) {
 		const dataKeys = getObjectKeys(documentType);
