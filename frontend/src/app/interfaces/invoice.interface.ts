@@ -43,3 +43,11 @@ export interface IInvoice {
   updatedAt?: string;
   __v?: number;
 }
+
+export interface ICreateInvoice {
+  invoice: IInvoice;
+	buyer: IBuyer;
+	seller: ISeller;
+	contract: IContract;
+	products: IProduct[];
+}

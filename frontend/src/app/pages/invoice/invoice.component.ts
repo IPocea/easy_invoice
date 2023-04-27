@@ -27,13 +27,19 @@ import { SelectContractModelComponent } from './components/select-contract-model
 import { ConfirmationDialogComponent } from '@shared/components/confirmation-dialog/confirmation-dialog.component';
 import {
   add,
+  cleanForm,
   divide,
   findInvalidControls,
   multiply,
   substract,
 } from '@utils/index';
 import { environment } from '../../../environments/environment';
-import { replaceContractVarFunc, setBuyerFormFunc, setFormFunc } from './utils';
+import {
+  replaceContractVarFunc,
+  setBuyerFormFunc,
+  setFormFunc,
+  setInvoiceFormFunc,
+} from './utils';
 
 class PreserveWhiteSpace {
   constructor(private quill: any, private options: {}) {
@@ -87,7 +93,12 @@ export class InvoiceComponent implements OnInit {
 
   addEditInvoice(): void {
     this.replaceContractVars();
-    console.log(this.addEditInvoiceForm.value);
+    this.cleanAllForms();
+    if (this.currentInvoice) {
+      this.updateInvoice();
+    } else {
+      this.createInvoice();
+    }
   }
 
   addProduct(): void {
@@ -116,10 +127,7 @@ export class InvoiceComponent implements OnInit {
       this.products.controls.splice(index, 1);
       this.adjustTotalRates();
       const invalid = findInvalidControls(this.products as FormArray);
-      console.log(invalid);
       if (!invalid.length) {
-        console.log(1);
-
         this.addEditInvoiceForm.controls['products'].markAsPristine();
         this.addEditInvoiceForm.controls['products'].updateValueAndValidity();
       }
@@ -135,6 +143,8 @@ export class InvoiceComponent implements OnInit {
     this.addChangeBuyerRef.afterClosed().subscribe((res) => {
       if (res?.event === 'Send Buyer') {
         this.setBuyerForm(res.buyer);
+        console.log(this.addEditInvoiceForm.value.invoice);
+        this.setInvoiceForm(res.buyer);
         console.log(this.addEditInvoiceForm.value);
       }
     });
@@ -239,6 +249,7 @@ export class InvoiceComponent implements OnInit {
   private getParams(): void {
     this.route.params.subscribe((params) => {
       if (params['id'].toLowerCase() === 'adauga') {
+        this.currentInvoice = null;
         this.getContractModels();
       } else {
         this.getInvoice(params['id']);
@@ -306,6 +317,12 @@ export class InvoiceComponent implements OnInit {
       .subscribe({
         next: (invoice) => {
           this.currentInvoice = invoice;
+          console.log(this.currentInvoice)
+          if (this.currentInvoice.buyer.CUI) {
+            this.doesInvoiceBelongsToCompany = true;
+          } else {
+            this.doesInvoiceBelongsToCompany = false;
+          }
         },
         error: (err) => {
           this.notificationService.error(err.error.message);
@@ -419,6 +436,7 @@ export class InvoiceComponent implements OnInit {
       this.myCompany,
       existingProducts
     );
+    console.log(this.addEditInvoiceForm.value);
   }
 
   private setBuyerForm(buyer: IBuyer): void {
@@ -428,5 +446,71 @@ export class InvoiceComponent implements OnInit {
     this.addEditInvoiceForm.controls['buyer'] = buyerGroup;
     // change the values of buyer to buyerGroup.value
     this.addEditInvoiceForm.patchValue({ buyer: buyerGroup.value });
+    this.doesInvoiceBelongsToCompany = this.addEditInvoiceForm.value.buyer.CUI
+      ? true
+      : false;
+  }
+
+  private createInvoice(): void {
+    this.invoiceService
+      .create(this.addEditInvoiceForm.value)
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.isAddingEditing = false;
+        })
+      )
+      .subscribe({
+        next: (invoice) => {
+          this.notificationService.info('Factura a fost adaugata cu succes');
+          this.router.navigate(['factura', invoice._id]);
+        },
+        error: (err) => {
+          this.notificationService.error(err.error.message);
+        },
+      });
+  }
+
+  private updateInvoice(): void {
+    this.invoiceService
+      .update(this.addEditInvoiceForm.value, this.currentInvoice._id)
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.isAddingEditing = false;
+        })
+      )
+      .subscribe({
+        next: (invoice) => {
+          this.notificationService.info('Factura a fost modificata cu succes');
+          this.router.navigate(['factura', invoice._id]);
+        },
+        error: (err) => {
+          this.notificationService.error(err.error.message);
+        },
+      });
+  }
+
+  private cleanAllForms(): void {
+    const controls = this.addEditInvoiceForm.controls;
+    for (const name in controls) {
+      if (name !== 'products') {
+        cleanForm(controls[name] as FormGroup);
+      } else {
+        for (const productForm of this.products.controls) {
+          cleanForm(productForm as FormGroup);
+        }
+      }
+    }
+  }
+
+  private setInvoiceForm(buyer: IBuyer): void {
+    const invoiceGroup = setInvoiceFormFunc(
+      this.addEditInvoiceForm.value.invoice,
+      this.fb,
+      this.doesInvoiceBelongsToCompany,
+      buyer
+    );
+    this.addEditInvoiceForm.setControl('invoice', invoiceGroup);
   }
 }

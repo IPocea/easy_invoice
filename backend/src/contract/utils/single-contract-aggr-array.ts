@@ -1,4 +1,11 @@
-export const contractsAggregationArray: object[] = [
+import { Types } from "mongoose";
+
+export const contractsSingleAggrArray = (contractId: Types.ObjectId) => [
+	{
+		$match: {
+			_id: contractId,
+		},
+	},
 	{
 		$lookup: {
 			from: "invoices",

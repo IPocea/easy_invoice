@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 
 export class CreateBuyerDto {
+	_id?: Types.ObjectId;
 	name: string;
 	J?: string;
 	CUI?: string;

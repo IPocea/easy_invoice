@@ -16,7 +16,7 @@ export const setBuyerFormFunc = (
         county: [buyer.county, [Validators.required]],
         bankAccount: [buyer.bankAccount],
         bank: [buyer.bank],
-        _id: [currentInvoice ? currentInvoice.buyer._id : null],
+        // _id: [currentInvoice ? buyer._id : null],
       })
     : fb.group({
         name: [buyer.name, [Validators.required]],
@@ -26,7 +26,7 @@ export const setBuyerFormFunc = (
         county: [buyer.county, [Validators.required]],
         bankAccount: [buyer.bankAccount],
         bank: [buyer.bank],
-        _id: [currentInvoice ? currentInvoice.buyer._id : null],
+        _id: [currentInvoice ? buyer._id : null],
       });
   return buyerGroup;
 };

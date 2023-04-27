@@ -102,7 +102,22 @@ export const getSglInvoiceAggrArray = (invoiceId: Types.ObjectId) => {
 						},
 					},
 				},
-				products: 1,
+				products: {
+					$map: {
+						input: "$products",
+						in: {
+							_id: "$$this._id",
+							name: "$$this.name",
+							quantity: "$$this.quantity",
+							unitPrice: {
+								$divide: ["$$this.unitPrice", 100],
+							},
+							VAT: "$$this.VAT",
+							invoiceId: "$$this.invoiceId",
+							UM: "$$this.UM",
+						},
+					},
+				},
 				totalCost: 1,
 				totalPayments: 1,
 				typeOfInvoice: 1,
@@ -113,6 +128,10 @@ export const getSglInvoiceAggrArray = (invoiceId: Types.ObjectId) => {
 				isCancelled: 1,
 				cancellationNotices: 1,
 				borderColor: 1,
+				addedBy: 1,
+				editedBy: 1,
+				companyId: 1,
+				individualId: 1,
 			},
 		},
 	];

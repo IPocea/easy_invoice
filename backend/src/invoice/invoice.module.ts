@@ -58,7 +58,7 @@ export class InvoiceModule {
 			.apply(VerifyInvoiceCreate)
 			.forRoutes({ path: "invoices/add", method: RequestMethod.POST });
 		consumer.apply(VerifyInvoiceUpdate).forRoutes({
-			path: "invoices/edit-full-invoice",
+			path: "invoices/:id/edit-full-invoice",
 			method: RequestMethod.PATCH,
 		});
 	}

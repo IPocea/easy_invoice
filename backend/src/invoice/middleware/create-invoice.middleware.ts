@@ -27,7 +27,6 @@ export class VerifyInvoiceCreate implements NestMiddleware {
 			req.body.seller.county,
 			req.body.seller.vatRate,
 			req.body.contract.number,
-			req.body.contract.date,
 			req.body.contract.subjectOfContract
 		);
 
@@ -56,12 +55,12 @@ export class VerifyInvoiceCreate implements NestMiddleware {
 		}
 		const duplicate = await this.invoiceService.findOne({
 			number: {
-				$regex: new RegExp("^" + req.body.number + "$"),
+				$regex: new RegExp("^" + req.body.invoice.number + "$"),
 			},
 		});
 		if (duplicate) {
 			throw new BadRequestException(
-				`Numarul ${req.body.number} este deja in folosinta!`
+				`Numarul de factura ${req.body.invoice.number} este deja in folosinta!`
 			);
 		}
 		next();

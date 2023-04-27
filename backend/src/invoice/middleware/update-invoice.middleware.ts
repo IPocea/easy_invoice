@@ -29,7 +29,6 @@ export class VerifyInvoiceUpdate implements NestMiddleware {
 			req.body.seller.county,
 			req.body.seller.vatRate,
 			req.body.contract.number,
-			req.body.contract.date,
 			req.body.contract.subjectOfContract
 		);
 
@@ -56,10 +55,10 @@ export class VerifyInvoiceUpdate implements NestMiddleware {
 				"Te rugam sa completezi toate campurile obligatorii"
 			);
 		}
-
-		const invoice = await this.invoiceService.findOne(
-			new this.ObjectId(`${req.body.invoice._id}`)
-		);
+    
+		const invoice = await this.invoiceService.findOne({
+			_id: new this.ObjectId(`${req.params.id}`),
+		});
 
 		if (req.body.invoice.number !== invoice.number) {
 			const duplicate = await this.invoiceService.findOne({
@@ -73,7 +72,7 @@ export class VerifyInvoiceUpdate implements NestMiddleware {
 				);
 			}
 		}
-
+		
 		next();
 	}
 }

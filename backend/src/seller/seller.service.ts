@@ -46,6 +46,21 @@ export class SellerService {
 		}
 	}
 
+	async updateOneByInvoiceId(
+		invoiceId: Types.ObjectId,
+		updateSellerDto: UpdateSellerDto
+	): Promise<ISeller> {
+		try {
+			return await this.sellerModel.findOneAndUpdate(
+				{ invoiceId: invoiceId },
+				updateSellerDto,
+				{ new: true }
+			);
+		} catch (error) {
+			return null;
+		}
+	}
+
 	async deleteOne(sellerId: Types.ObjectId): Promise<IMessageResponse> {
 		try {
 			await this.sellerModel.deleteOne({

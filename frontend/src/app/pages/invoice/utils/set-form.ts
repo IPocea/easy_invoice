@@ -11,6 +11,16 @@ export const setFormFunc = (
   myCompany: IMyCompany,
   existingProducts: FormGroup[]
 ): FormGroup => {
+  let editedBy = '';
+  if (currentInvoice) {
+    if (currentInvoice.editedBy) {
+      editedBy = currentInvoice.editedBy;
+    } else {
+      editedBy = currentUser.firstName + ' ' + currentUser.lastName;
+    }
+  } else {
+    editedBy = null;
+  }
   const formGroup = fb.group({
     invoice: doesInvoiceBelongsToCompany
       ? fb.group({
@@ -43,14 +53,17 @@ export const setFormFunc = (
           paymentStatus: [
             currentInvoice ? currentInvoice.paymentStatus : false,
           ],
-          companyId: [currentInvoice ? currentInvoice.companyId : null],
+          companyId: [
+            currentInvoice ? currentInvoice.companyId : null,
+            [Validators.required],
+          ],
           addedBy: [
             currentInvoice
               ? currentInvoice.addedBy
               : currentUser.firstName + ' ' + currentUser.lastName,
             [Validators.required],
           ],
-          editedBy: [currentInvoice ? currentInvoice.editedBy : null],
+          editedBy: [editedBy],
         })
       : fb.group({
           typeOfInvoice: [
@@ -92,7 +105,7 @@ export const setFormFunc = (
               : currentUser.firstName + ' ' + currentUser.lastName,
             [Validators.required],
           ],
-          editedBy: [currentInvoice ? currentInvoice.editedBy : null],
+          editedBy: [editedBy],
         }),
     buyer: doesInvoiceBelongsToCompany
       ? fb.group({
@@ -120,7 +133,7 @@ export const setFormFunc = (
             currentInvoice ? currentInvoice.buyer.bankAccount : null,
           ],
           bank: [currentInvoice ? currentInvoice.buyer.bank : null],
-          _id: [currentInvoice ? currentInvoice.buyer._id : null],
+          // _id: [currentInvoice ? currentInvoice.buyer._id : null],
         })
       : fb.group({
           name: [
@@ -147,7 +160,7 @@ export const setFormFunc = (
             currentInvoice ? currentInvoice.buyer.bankAccount : null,
           ],
           bank: [currentInvoice ? currentInvoice.buyer.bank : null],
-          _id: [currentInvoice ? currentInvoice.buyer._id : null],
+          // _id: [currentInvoice ? currentInvoice.buyer._id : null],
         }),
     seller: fb.group({
       name: [myCompany.name, [Validators.required]],
@@ -206,7 +219,8 @@ export const setFormFunc = (
           : currentUser.firstName + ' ' + currentUser.lastName,
         [Validators.required],
       ],
-      editedBy: [currentInvoice ? currentInvoice.editedBy : null],
+      editedBy: [editedBy],
+      _id: [currentInvoice ? currentInvoice.contract._id : null],
     }),
     products: fb.array(existingProducts, [Validators.required]),
   });

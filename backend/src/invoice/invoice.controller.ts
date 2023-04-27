@@ -76,13 +76,15 @@ export class InvoiceController {
 	}
 
 	@UseGuards(AccesTokenGuard)
-	@Patch("edit-full-invoice")
+	@Patch(":id/edit-full-invoice")
 	async editFullInvoice(
 		@Request() req,
+		@Param("id") invoiceId: string,
 		@Body() updateFullInvoice: UpdateFullInvoiceDto
 	): Promise<IInvoice> {
 		const result = await this.invoiceService.updateFullInvoice(
-			updateFullInvoice
+			updateFullInvoice,
+			new this.ObjectId(`${invoiceId}`)
 		);
 		if (!result) {
 			throw new BadRequestException();

@@ -45,7 +45,10 @@ export class InvoiceService {
 	async findOneFullData(invoiceId: Types.ObjectId): Promise<IInvoice> {
 		try {
 			const aggArray = getSglInvoiceAggrArray(invoiceId);
-			return await this.invoiceModel.aggregate(aggArray)[0];
+			// you need to save the result first and then use result[0] otherwhise
+			// [0] it will not wait for await and go undefined
+			const result = await this.invoiceModel.aggregate(aggArray);
+			return result[0];
 		} catch (error) {
 			return null;
 		}
@@ -57,12 +60,14 @@ export class InvoiceService {
 			await invoice.save();
 			const buyerDto = newFullInvoice.buyer;
 			buyerDto.invoiceId = invoice._id;
+			// delete buyerDto._id;
 			const buyer = await this.buyerService.create(buyerDto);
 			const sellerDto = newFullInvoice.seller;
 			sellerDto.invoiceId = invoice._id;
+			delete sellerDto._id;
 			const seller = await this.sellerService.create(sellerDto);
 			const contractDto = newFullInvoice.contract;
-			sellerDto.invoiceId = invoice._id;
+			contractDto.invoiceId = invoice._id;
 			const contract = await this.contractService.create(contractDto);
 			if (buyer && seller && contract) {
 				for (const productDto of newFullInvoice.products) {
@@ -82,34 +87,25 @@ export class InvoiceService {
 	}
 
 	async updateFullInvoice(
-		updateFullInvoice: UpdateFullInvoiceDto
+		updateFullInvoice: UpdateFullInvoiceDto,
+		invoiceId: Types.ObjectId
 	): Promise<IInvoice> {
 		try {
-			updateFullInvoice.buyer._id = new this.ObjectId(
-				`${updateFullInvoice.buyer._id}`
-			);
-			updateFullInvoice.seller._id = new this.ObjectId(
-				`${updateFullInvoice.seller._id}`
-			);
-			updateFullInvoice.invoice._id = new this.ObjectId(
-				`${updateFullInvoice.invoice._id}`
-			);
-			updateFullInvoice.contract._id = new this.ObjectId(
-				`${updateFullInvoice.contract._id}`
-			);
+			console.log(updateFullInvoice);
+			updateFullInvoice.buyer.invoiceId = invoiceId;
 
-			await this.buyerService.updateOne(
-				updateFullInvoice.buyer._id,
+			await this.buyerService.updateOneByInvoiceId(
+				invoiceId,
 				updateFullInvoice.buyer
 			);
 
-			await this.sellerService.updateOne(
-				updateFullInvoice.seller._id,
+			await this.sellerService.updateOneByInvoiceId(
+				invoiceId,
 				updateFullInvoice.seller
 			);
 
-			await this.contractService.updateOne(
-				updateFullInvoice.contract._id,
+			await this.contractService.updateOneByInvoiceId(
+				invoiceId,
 				updateFullInvoice.contract
 			);
 
@@ -124,18 +120,15 @@ export class InvoiceService {
 						quantity: product.quantity,
 						unitPrice: product.unitPrice,
 						VAT: product.VAT,
-						invoiceId: updateFullInvoice.invoice._id,
+						invoiceId: invoiceId,
 						UM: product.UM,
 					};
 					await this.productService.create(newProduct);
 				}
 			}
 
-			await this.updateOne(
-				updateFullInvoice.invoice._id,
-				updateFullInvoice.invoice
-			);
-			return await this.findOneFullData(updateFullInvoice.invoice._id);
+			await this.updateOne(invoiceId, updateFullInvoice.invoice);
+			return await this.findOneFullData(invoiceId);
 		} catch (error) {
 			throw new BadRequestException(error.message);
 		}

@@ -5,7 +5,7 @@ import { IMessageResponse, IQueryParams } from "src/utils/shared-interface";
 import { CreateContractDto, UpdateContractDto } from "./dto";
 import { IContract, IContractPagination } from "./interface/contract-interface";
 import { Contract, ContractDocument } from "./schemas/contract.schema";
-import { getContractPagination } from "./utils";
+import { contractsSingleAggrArray, getContractPagination } from "./utils";
 
 @Injectable()
 export class ContractService {
@@ -38,6 +38,16 @@ export class ContractService {
 		}
 	}
 
+	async findOneFullData(contractId: Types.ObjectId): Promise<IContract> {
+		try {
+			const aggrArray = contractsSingleAggrArray(contractId);
+			const result = await this.contractModel.aggregate(aggrArray);
+			return result[0];
+		} catch (error) {
+			return null;
+		}
+	}
+
 	async updateOne(
 		contractId: Types.ObjectId,
 		updateContractDto: UpdateContractDto
@@ -45,6 +55,21 @@ export class ContractService {
 		try {
 			return await this.contractModel.findOneAndUpdate(
 				{ _id: contractId },
+				updateContractDto,
+				{ new: true }
+			);
+		} catch (error) {
+			return null;
+		}
+	}
+
+	async updateOneByInvoiceId(
+		invoiceId: Types.ObjectId,
+		updateContractDto: UpdateContractDto
+	): Promise<IContract> {
+		try {
+			return await this.contractModel.findOneAndUpdate(
+				{ invoiceId: invoiceId },
 				updateContractDto,
 				{ new: true }
 			);

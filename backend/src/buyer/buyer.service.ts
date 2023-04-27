@@ -8,7 +8,6 @@ import { Buyer, BuyerDocument } from "./schemas/buyer.schema";
 
 @Injectable()
 export class BuyerService {
-
 	constructor(
 		@InjectModel(Buyer.name)
 		private buyerModel: Model<BuyerDocument>
@@ -19,6 +18,7 @@ export class BuyerService {
 			const createdBuyer = new this.buyerModel(newBuyer);
 			return await createdBuyer.save();
 		} catch (error) {
+			console.log(error);
 			return null;
 		}
 	}
@@ -47,6 +47,35 @@ export class BuyerService {
 		}
 	}
 
+	async updateOneByInvoiceId(
+		invoiceId: Types.ObjectId,
+		updateBuyerDto: UpdateBuyerDto
+	): Promise<IBuyer> {
+		try {
+			const actualBuyer = await this.findOne({
+				invoiceId: invoiceId,
+			});
+			if (
+				(actualBuyer.CUI && updateBuyerDto.CUI) ||
+				(actualBuyer.CNP && updateBuyerDto.CNP)
+			) {
+				return await this.buyerModel.findOneAndUpdate(
+					{ invoiceId: invoiceId },
+					updateBuyerDto,
+					{ new: true }
+				);
+			} else {
+				await this.deleteOne(actualBuyer._id);
+				const newBuyerDto = updateBuyerDto as CreateBuyerDto;
+				const newBuyer = await this.create(newBuyerDto);
+				console.log(newBuyer)
+				return newBuyer;
+			}
+		} catch (error) {
+			return null;
+		}
+	}
+
 	async deleteOne(buyerId: Types.ObjectId): Promise<IMessageResponse> {
 		try {
 			await this.buyerModel.deleteOne({
@@ -54,6 +83,21 @@ export class BuyerService {
 			});
 			return {
 				message: `Cumparatorul cu id-ul ${buyerId.toString()} a fost sters`,
+			};
+		} catch (error) {
+			return null;
+		}
+	}
+
+	async deleteOneByInvoiceId(
+		invoiceId: Types.ObjectId
+	): Promise<IMessageResponse> {
+		try {
+			await this.buyerModel.deleteOne({
+				invoiceId: invoiceId,
+			});
+			return {
+				message: `Cumparatorul cu id-ul ${invoiceId.toString()} a fost sters`,
 			};
 		} catch (error) {
 			return null;
