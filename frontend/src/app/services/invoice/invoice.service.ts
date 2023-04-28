@@ -32,4 +32,11 @@ export class InvoiceService {
       updateInvoiceBody
     );
   }
+
+  getInvoiceAsPdf(invoiceId: string): Observable<any> {
+    return this.http.get<any>(
+      environment.baseUrl + `invoices/${invoiceId}/generate-pdf`,
+      { responseType: 'blob' as 'json' }
+    );
+  }
 }

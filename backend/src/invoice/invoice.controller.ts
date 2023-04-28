@@ -150,9 +150,17 @@ export class InvoiceController {
 		return result;
 	}
 
-	// @UseGuards(AccesTokenGuard)
-	@Get("generate-pdf/:invoiceId")
+	@UseGuards(AccesTokenGuard)
+	@Get(":invoiceId/generate-pdf")
 	async generatePdf(@Param("invoiceId") invoiceId: string, @Res() res) {
+		const invoice = await this.invoiceService.findOneFullData(
+			new this.ObjectId(`${invoiceId}`)
+		);
+		if (!invoice) {
+			throw new NotFoundException(
+				`Nu exista o factura cu id-ul ${invoiceId}`
+			);
+		}
 		const templateFile = fs.readFileSync(
 			join(
 				resolve(process.cwd()),
@@ -164,13 +172,13 @@ export class InvoiceController {
 			"utf8"
 		);
 		const template = handlebars.compile(templateFile);
-		const data = {
-			title: "My PDF",
-			content:
-				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce tincidunt lacus et sapien scelerisque, vel venenatis enim rutrum.",
-		};
+		// const data = {
+		// 	title: "My PDF",
+		// 	content:
+		// 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce tincidunt lacus et sapien scelerisque, vel venenatis enim rutrum.",
+		// };
 
-		const html = template(data);
+		const html = template(invoice);
 		const browser = await puppeteer.launch();
 		const page = await browser.newPage();
 

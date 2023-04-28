@@ -46,7 +46,7 @@ export class ContractController {
 	@Get(":id/get-pdf")
 	async getContractAsPdf(
 		@Res() res,
-		@Param(":id") contractId: string
+		@Param("id") contractId: string
 	): Promise<void> {
 		const contract = await this.contractService.findOneFullData(
 			new this.ObjectId(`${contractId}`)

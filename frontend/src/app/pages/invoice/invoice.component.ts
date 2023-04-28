@@ -7,16 +7,19 @@ import {
   IContractModel,
   IMyCompany,
   IProduct,
+  ITokens,
   IUser,
 } from '@interfaces';
 import {
   ContractModelService,
+  ContractService,
   InvoiceService,
   LoginDataService,
   MyCompanyService,
   NotificationService,
   ProductService,
   StorageService,
+  TokenService,
 } from '@services';
 import { quillBasicModule } from '@utils/quill-module';
 import { IInvoice } from 'interfaces/invoice.interface';
@@ -40,6 +43,7 @@ import {
   setFormFunc,
   setInvoiceFormFunc,
 } from './utils';
+import { HttpErrorResponse } from '@angular/common/http';
 
 class PreserveWhiteSpace {
   constructor(private quill: any, private options: {}) {
@@ -83,12 +87,15 @@ export class InvoiceComponent implements OnInit {
     private router: Router,
     private fb: FormBuilder,
     private notificationService: NotificationService,
-    private productService: ProductService
+    private productService: ProductService,
+    private tokenService: TokenService,
+    private contractService: ContractService
   ) {}
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.currentUser = this.loginDataService.getLoggedUser();
-    this.getMyCompany();
+    this.getParams();
   }
 
   addEditInvoice(): void {
@@ -174,6 +181,16 @@ export class InvoiceComponent implements OnInit {
     this.adjustTotalRatesSetTimeout();
   }
 
+  viewContract(): void {
+    this.isAddingEditing = true;
+    this.refreshToken('contract');
+  }
+
+  vewInvoice(): void {
+    this.isAddingEditing = true;
+    this.refreshToken('invoice');
+  }
+
   private handleDecimals(control: string, i: number): void {
     const value = this.products.controls[i].value[control];
     if (!value) return;
@@ -228,14 +245,19 @@ export class InvoiceComponent implements OnInit {
     this.isAddingEditing = false;
   }
 
-  private getMyCompany(): void {
+  private getMyCompany(params: string): void {
     this.myCompanyService
       .getMyCompany()
       .pipe(take(1))
       .subscribe({
         next: (myCompany) => {
           this.myCompany = myCompany[0];
-          this.getParams();
+          if (params.toLowerCase() === 'adauga') {
+            this.currentInvoice = null;
+            this.getContractModels();
+          } else {
+            this.getInvoice(params);
+          }
         },
         error: (err) => {
           this.notificationService.error(
@@ -248,12 +270,7 @@ export class InvoiceComponent implements OnInit {
 
   private getParams(): void {
     this.route.params.subscribe((params) => {
-      if (params['id'].toLowerCase() === 'adauga') {
-        this.currentInvoice = null;
-        this.getContractModels();
-      } else {
-        this.getInvoice(params['id']);
-      }
+      this.getMyCompany(params['id']);
     });
   }
 
@@ -317,7 +334,7 @@ export class InvoiceComponent implements OnInit {
       .subscribe({
         next: (invoice) => {
           this.currentInvoice = invoice;
-          console.log(this.currentInvoice)
+          console.log(this.currentInvoice);
           if (this.currentInvoice.buyer.CUI) {
             this.doesInvoiceBelongsToCompany = true;
           } else {
@@ -326,6 +343,11 @@ export class InvoiceComponent implements OnInit {
         },
         error: (err) => {
           this.notificationService.error(err.error.message);
+          if (
+            err.error.message.startsWith('Nu am putut gasi factura cu id-ul')
+          ) {
+            this.router.navigate(['factura/adauga']);
+          }
         },
       });
   }
@@ -512,5 +534,76 @@ export class InvoiceComponent implements OnInit {
       buyer
     );
     this.addEditInvoiceForm.setControl('invoice', invoiceGroup);
+  }
+
+  private generateContractPdf(): void {
+    this.contractService
+      .getContractAsPdf(this.currentInvoice?.contract._id)
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.isAddingEditing = false;
+        })
+      )
+      .subscribe({
+        next: (data: Blob) => {
+          const file = new Blob([data], { type: 'application/pdf' });
+          const fileURL = URL.createObjectURL(file);
+          window.open(fileURL, '_blank');
+        },
+        error: (err) => {},
+      });
+  }
+
+  private generateInvoicePdf(): void {
+    this.invoiceService
+      .getInvoiceAsPdf(this.currentInvoice?._id)
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.isAddingEditing = false;
+        })
+      )
+      .subscribe({
+        next: (data: Blob) => {
+          const file = new Blob([data], { type: 'application/pdf' });
+          const fileURL = URL.createObjectURL(file);
+          window.open(fileURL, '_blank');
+        },
+        error: (err) => {},
+      });
+  }
+
+  private refreshToken(documentType: string): void {
+    const tokens: ITokens = this.storageService.getItem('tokens') as ITokens;
+    this.tokenService
+      .useRefreshToken(tokens.refreshToken)
+      .pipe(take(1))
+      .subscribe({
+        next: (tokens) => {
+          this.storageService.setItem('tokens', tokens);
+          if (documentType === 'contract') {
+            this.generateContractPdf();
+          } else if (documentType === 'invoice') {
+            this.generateInvoicePdf();
+          }
+        },
+        error: (err) => {
+          if (
+            err instanceof HttpErrorResponse &&
+            err.status === 498 &&
+            (err.error.error === 'Tokenul refresh a expirat' ||
+              err.error.error === 'Acces interzis')
+          ) {
+            this.storageService.removeItem('tokens');
+            this.loginDataService.setNextLoggedUser(null);
+            this.router.navigate(['/login']);
+            this.notificationService.error(
+              err.error.error + '. Te rugam sa te loghezi'
+            );
+          }
+          this.isLoading = false;
+        },
+      });
   }
 }

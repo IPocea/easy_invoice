@@ -1,29 +1,502 @@
 <html>
-	<head>
-		<meta charset="utf-8" />
-		<title>{{title}}</title>
-		<style>
-      body {
-      font-family: Arial, sans-serif;
-      font-size: 14px;
-      line-height: 1.5;
-      color: #333;
-    }
 
-    h1 {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
+  <head>
+    <style>
+      /* Invoice container */
 
-    p {
-      margin-bottom: 20px;
-      border: 1px solid blue;
-    }
-		</style>
-	</head>
-	<body>
-		<h1>{{title}}</h1>
-		<p>{{content}}</p>
-	</body>
+      :root {
+        --pseudo-backgroundcolor: {{borderColor}};
+      }
+
+      .invoice-main-container {
+        display: grid;
+        grid-template-columns: repeat(17, 1fr);
+        grid-template-rows: repeat(26, 1fr);
+        border: 1px solid var(--pseudo-backgroundcolor);
+        width: 800px;
+        height: 1000px;
+      }
+
+      .invoice-main-container p {
+        margin: 0px;
+      }
+
+      .items {
+        border: 1px solid var(--pseudo-backgroundcolor);
+        display: flex;
+        font-size: smaller;
+      }
+
+      .items-flex-center {
+        justify-content: center;
+        align-items: center;
+      }
+
+      .items:first-child {
+        grid-row: 1 / 8;
+        grid-column: 1 / 18;
+      }
+
+      .items:nth-child(2) {
+        grid-row: 4 / 7;
+        grid-column: 6 / 12;
+        border: 2px solid var(--pseudo-backgroundcolor);
+        flex-direction: column;
+        justify-content: end;
+      }
+
+      .items:nth-child(3) {
+        grid-row: 8 / 10;
+        grid-column: 1 / 2;
+      }
+
+      .items:nth-child(4) {
+        grid-row: 8 / 10;
+        grid-column: 2 / 7;
+        text-align: center;
+        align-items: center;
+      }
+
+      .items:nth-child(5) {
+        grid-row: 8 / 10;
+        grid-column: 7 / 8;
+      }
+
+      .items:nth-child(6) {
+        grid-row: 8 / 10;
+        grid-column: 8 / 10;
+      }
+
+      .items:nth-child(7) {
+        grid-row: 8 / 10;
+        grid-column: 10 / 13;
+      }
+
+      .items:nth-child(8) {
+        grid-row: 8 / 10;
+        grid-column: 13 / 16;
+        text-align: center;
+      }
+
+      .items:nth-child(9) {
+        grid-row: 8 / 10;
+        grid-column: 16 / 18;
+        text-align: center;
+      }
+
+      .items:nth-child(10) {
+        grid-row: 10 / 11;
+        grid-column: 1 / 2;
+      }
+
+      .items:nth-child(11) {
+        grid-row: 10 / 11;
+        grid-column: 2 / 7;
+      }
+
+      .items:nth-child(12) {
+        grid-row: 10 / 11;
+        grid-column: 7 / 8;
+      }
+
+      .items:nth-child(13) {
+        grid-row: 10 / 11;
+        grid-column: 8 / 10;
+      }
+
+      .items:nth-child(14) {
+        grid-row: 10 / 11;
+        grid-column: 10 / 13;
+      }
+
+      .items:nth-child(15) {
+        grid-row: 10 / 11;
+        grid-column: 13 / 16;
+      }
+
+      .items:nth-child(16) {
+        grid-row: 10 / 11;
+        grid-column: 16 / 18;
+      }
+
+      .items-relative {
+        position: relative;
+      }
+
+      /* pseudo lines starts */
+
+      .items-relative::before {
+        content: "";
+        position: absolute;
+        width: 2px;
+        background-color: var(--pseudo-backgroundcolor);
+        height: 1270%;
+        bottom: -1270%;
+      }
+
+      .items:nth-child(10)::before {
+        right: -5%;
+      }
+
+      .items:nth-child(11)::before {
+        right: -0.5%;
+      }
+
+      .items:nth-child(12)::before {
+        right: -4.5%;
+      }
+
+      .items:nth-child(13)::before {
+        right: -2.3%;
+      }
+
+      .items:nth-child(14)::before {
+        right: -2%;
+      }
+
+      .items:nth-child(15)::before {
+        right: -1.5%;
+      }
+
+      /* pseudo lines ends */
+
+      /* start product body invoice */
+
+      .items:nth-child(17) {
+        grid-row: 11 / 23;
+        grid-column: 1 / 18;
+      }
+
+      .invoice-product-container {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .invoice-product-row {
+        display: flex;
+        align-items: flex-start;
+        text-align: center;
+        flex-wrap: wrap;
+        margin-bottom: 3px;
+      }
+
+      .invoice-product-row div:first-child {
+        width: 5.88%;
+      }
+
+      .invoice-product-row div:nth-child(2) {
+        width: 29.41%;
+        text-align: start;
+      }
+
+      .invoice-product-row div:nth-child(3) {
+        width: 5.88%;
+      }
+
+      .invoice-product-row div:nth-child(4) {
+        width: 11.76%;
+      }
+
+      .invoice-product-row div:nth-child(5) {
+        width: 17.64%;
+      }
+
+      .invoice-product-row div:nth-child(6) {
+        width: 17.64%;
+      }
+
+      .invoice-product-row div:nth-child(7) {
+        width: 11.76%;
+      }
+
+      /* finish */
+
+      .items:nth-child(18) {
+        grid-row: 23 / 27;
+        grid-column: 1 / 4;
+      }
+
+      .items:nth-child(19) {
+        grid-row: 23 / 27;
+        grid-column: 4 / 13;
+        flex-direction: column;
+      }
+
+      .items:nth-child(20) {
+        grid-row: 23 / 24;
+        grid-column: 13 / 16;
+        align-items: end;
+      }
+
+      .items:nth-child(21) {
+        grid-row: 23 / 24;
+        grid-column: 16 / 18;
+        align-items: end;
+      }
+
+      .items:nth-child(22) {
+        grid-row: 24 / 25;
+        grid-column: 13 / 16;
+        align-items: end;
+      }
+
+      .items:nth-child(23) {
+        grid-row: 24 / 25;
+        grid-column: 16 / 18;
+        justify-content: end;
+        align-items: end;
+      }
+
+      .items:nth-child(24) {
+        grid-row: 25 / 27;
+        grid-column: 13 / 18;
+        flex-direction: column;
+        justify-content: center;
+        align-items: start;
+        text-indent: 5px;
+      }
+
+      .items:first-child div:first-child {
+        width: 30%;
+        display: flex;
+        flex-direction: column;
+        justify-content: end;
+        padding: 2px;
+      }
+
+      .items:first-child div:nth-child(2) {
+        width: 35%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 10%;
+        padding: 2px;
+      }
+
+      .items:first-child div:nth-child(2) p:nth-child(2) {
+        text-indent: 15px;
+        visibility: hidden;
+      }
+
+      .items:first-child div:nth-child(3) {
+        width: 35%;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        padding: 2px;
+        margin-left: 5px;
+      }
+
+      .items:first-child div:nth-child(3) div {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .items:nth-child(2) p {
+        text-indent: 10px;
+      }
+
+      .items:nth-child(2) p:first-child {
+        align-self: end;
+        margin-right: 17% !important;
+        color: red;
+        font-size: 20px;
+        visibility: hidden;
+      }
+
+    </style>
+    <title>Factura</title>
+  </head>
+
+  <body>
+    <div class="invoice-main-container">
+      <div class="items">
+        <div>
+          <p>Furnizor: <b>{{seller.name}}</b></p>
+          <p>(denumire, forma juridica)</p>
+          <p>Nr. de inmatriculare in Registrul</p>
+          <p>comertului/anul: <b>{{seller.J}}</b></p>
+          <p>Codul fiscal: {{seller.CUI}}</p>
+          <p>
+            Sediul (localitatea, str, nr):
+            <b>{{seller.headquarters}}</b>
+          </p>
+          <p>Judetul: <b>{{seller.county}}</b></p>
+          <p>Cont: {{seller.bankAccount}}</p>
+          <p>Banca: {{seller.bank}}</p>
+          <p>Cont RO..............</p>
+          <p>Banca: <b>{{seller.treasury}}</b></p>
+          <p>Capital social: ..........</p>
+          <p>Cota TVA: {{seller.VAT}}</p>
+        </div>
+        <div>
+          <p>FACTURA</p>
+          <p id="invoice-type">{{typeOfInvoice}}</p>
+        </div>
+        <div>
+          <p>
+            Seria <b id="invoice-serial">{{series}}</b> Nr
+            <b>YIL<span id="invoice-number-top-right">{{number}}</span></b> EX
+          </p>
+          <p>
+            Cumparator:<b><span id="invoice-buyer">{{buyer.name}}</span></b>
+          </p>
+          <p>(denumire, forma juridica)</p>
+          <p>
+            Nr. de inmatriculare in Registrul comertului/an:
+            <b><span id="invoice-j">{{buyer.J}}</span></b>
+          </p>
+          <p>
+            Codul fiscal: <b><span id="invoice-cui">{{buyer.CUI}}</span></b>
+          </p>
+          <p>
+            Sediul (localiatea, str, nr):
+            <b><span id="invoice-buyer-address">{{buyer.headquarters}}</span></b>
+          </p>
+          <p style="visibility: hidden">...</p>
+          <p>
+            Judetul: <b><span id="invoice-buyer-county">{{buyer.county}}</span></b>
+          </p>
+          <p>
+            Cont: <b><span id="invoice-buyer-bank-account">{{buyer.bankAccount}}</span></b>
+          </p>
+          <p>
+            Banca: <b><span id="invoice-buyer-bank">{{buyer.bank}}</span></b>
+          </p>
+        </div>
+      </div>
+      <div class="items">
+        <p>
+          <b><span id="invoice-cancel"></span></b>
+        </p>
+        <p>
+          Nr facturii: <b>YIL<span id="invoice-number-center">{{number}}</span></b>
+        </p>
+        <p>Data <span id="invoice-date">{{date}}</span></p>
+        <p>
+          Nr. avizului de insotire a
+          <span id="invoice-notice-number">..............</span>
+        </p>
+        <p style="text-align: center">(daca este cazul)</p>
+        <p style="visibility: hidden">...</p>
+      </div>
+      <div class="items items-flex-center">
+        <p>Nr. Crt.</p>
+      </div>
+      <div class="items">
+        <p>Denumirea produselor sau a serviciilor</p>
+      </div>
+      <div class="items items-flex-center">
+        <p>U.M.</p>
+      </div>
+      <div class="items items-flex-center">
+        <p>Cantitate</p>
+      </div>
+      <div class="items items-flex-center">
+        <p>Pretul unitar</p>
+      </div>
+      <div class="items items-flex-center">
+        <p>Valoare</p>
+      </div>
+      <div class="items items-flex-center">
+        <p>TVA</p>
+      </div>
+      <div class="items items-flex-center items-relative">
+        <p>0</p>
+      </div>
+      <div class="items items-flex-center items-relative">
+        <p>1</p>
+      </div>
+      <div class="items items-flex-center items-relative">
+        <p>2</p>
+      </div>
+      <div class="items items-flex-center items-relative">
+        <p>3</p>
+      </div>
+      <div class="items items-flex-center items-relative">
+        <p>4</p>
+      </div>
+      <div class="items items-flex-center items-relative">
+        <p>5(3x4)</p>
+      </div>
+      <div class="items items-flex-center">
+        <p>6(5xTVA)</p>
+      </div>
+
+      <div class="invoice-product-container items">
+        <div class="invoice-product-row">
+          <div>
+            <p>1 Index</p>
+          </div>
+          <div>
+            <p>Denumire produs</p>
+          </div>
+          <div>
+            <p>2 m liniari</p>
+          </div>
+          <div>
+            <p>cantiate 2</p>
+          </div>
+          <div>
+            <p>pret unitar 3</p>
+          </div>
+          <div>
+            <p>valoare 20</p>
+          </div>
+          <div>
+            <p>TVA 2</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="items">
+        <p>Semnatura si stampila furnizorului</p>
+      </div>
+      <div class="items">
+        <p>Date privind expeditia</p>
+        <p>Numele delegatului</p>
+        <p><b>OMER KARAHASANGOLU</b></p>
+        <p>
+          Buletinul/cartea de identitate
+          ...........................................
+        </p>
+        <p>
+          seria .......... nr ......... eliberat(a)
+          .......................................
+        </p>
+        <p>
+          Mijlocul de transport
+          ........................................................
+        </p>
+        <p>
+          nr
+          .......................................................................................
+        </p>
+        <p>Expedierea s-a facut in prezenta noastra la data ...............</p>
+        <p>
+          Semnaturile
+          .......................................................................
+        </p>
+      </div>
+      <div class="items">
+        <p><b id="invoice-total-rate-without-vat">0.00</b></p>
+      </div>
+      <div class="items">
+        <p><b id="invoice-total-rate-with-vat">0.00</b></p>
+      </div>
+      <div class="items">
+        <p>TOTAL</p>
+      </div>
+      <div class="items">
+        <p><b id="invoice-total-rate">0.00</b></p>
+      </div>
+      <div class="items">
+        <p>Semnatura</p>
+        <p>de primire</p>
+      </div>
+    </div>
+
+  </body>
+
 </html>

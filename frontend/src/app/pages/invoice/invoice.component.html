@@ -261,8 +261,29 @@
         </button>
         <div class="total-box">Total: {{ totalRate }}</div>
         <div class="total-box">Total TVA: {{ totalVatRate }}</div>
-        <button *ngIf="currentInvoice" type="button" mat-raised-button>
+        <button
+          *ngIf="currentInvoice"
+          type="button"
+          mat-raised-button
+          (click)="vewInvoice()"
+        >
           Vizualizeaza Factura
+        </button>
+        <button
+          *ngIf="currentInvoice"
+          type="button"
+          mat-raised-button
+          (click)="viewContract()"
+        >
+          Vizualizeaza Contractul
+        </button>
+        <button
+          *ngIf="currentInvoice"
+          type="button"
+          mat-raised-button
+          color="accent"
+        >
+          Sterge Factura
         </button>
       </header>
       <ng-container *ngIf="addEditInvoiceForm">

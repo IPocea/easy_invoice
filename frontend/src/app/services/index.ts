@@ -13,3 +13,4 @@ export * from './individuals/individuals.service';
 export * from './contract-model/contract-model.service';
 export * from './invoice/invoice.service';
 export * from './product/product.service';
+export * from './contract/contract.service';
