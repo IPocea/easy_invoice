@@ -129,33 +129,35 @@
         content: "";
         position: absolute;
         width: 2px;
-        background-color: var(--pseudo-backgroundcolor);
-        height: 1270%;
-        bottom: -1270%;
+        height: 1260%;
+        bottom: -1260%;
+        {{!-- background-image: var(--pseudo-backgroundcolor) !important; --}}
+        box-shadow: 2px 2px 0px var(--pseudo-backgroundcolor) ;
+        z-index: 1;
       }
 
       .items:nth-child(10)::before {
-        right: -5%;
+        right: -1% !important;
       }
 
       .items:nth-child(11)::before {
-        right: -0.5%;
+        right: 0%;
       }
 
       .items:nth-child(12)::before {
-        right: -4.5%;
+        right: 0%;
       }
 
       .items:nth-child(13)::before {
-        right: -2.3%;
+        right: 0%;
       }
 
       .items:nth-child(14)::before {
-        right: -2%;
+        right: 0%;
       }
 
       .items:nth-child(15)::before {
-        right: -1.5%;
+        right: 0%;
       }
 
       /* pseudo lines ends */
@@ -275,7 +277,6 @@
 
       .items:first-child div:nth-child(2) p:nth-child(2) {
         text-indent: 15px;
-        visibility: hidden;
       }
 
       .items:first-child div:nth-child(3) {
@@ -302,7 +303,6 @@
         margin-right: 17% !important;
         color: red;
         font-size: 20px;
-        visibility: hidden;
       }
 
     </style>
@@ -344,12 +344,17 @@
           </p>
           <p>(denumire, forma juridica)</p>
           <p>
-            Nr. de inmatriculare in Registrul comertului/an:
-            <b><span id="invoice-j">{{buyer.J}}</span></b>
-          </p>
+						Nr. de inmatriculare in Registrul comertului/an:
+						<b><span id="invoice-j">{{#if
+									buyer.J
+								}}{{buyer.J}}{{else}}{{buyer.series}}{{/if}}</span></b>
+					</p>
           <p>
-            Codul fiscal: <b><span id="invoice-cui">{{buyer.CUI}}</span></b>
-          </p>
+						Codul fiscal:
+						<b><span id="invoice-cui">{{#if
+									buyer.CUI
+								}}{{buyer.CUI}}{{else}}{{buyer.CNP}}{{/if}}</span></b>
+					</p>
           <p>
             Sediul (localiatea, str, nr):
             <b><span id="invoice-buyer-address">{{buyer.headquarters}}</span></b>
@@ -368,15 +373,15 @@
       </div>
       <div class="items">
         <p>
-          <b><span id="invoice-cancel"></span></b>
+          <b><span id="invoice-cancel">{{is-cancelled isCancelled cancellationNotices}}</span></b>
         </p>
         <p>
           Nr facturii: <b>YIL<span id="invoice-number-center">{{number}}</span></b>
         </p>
-        <p>Data <span id="invoice-date">{{date}}</span></p>
+        <p>Data <span id="invoice-date">{{date-format date}}</span></p>
         <p>
           Nr. avizului de insotire a
-          <span id="invoice-notice-number">..............</span>
+          <span id="invoice-notice-number">{{notice-number numberOfAccompanyingNotice}}</span>
         </p>
         <p style="text-align: center">(daca este cazul)</p>
         <p style="visibility: hidden">...</p>
@@ -425,30 +430,18 @@
       </div>
 
       <div class="invoice-product-container items">
-        <div class="invoice-product-row">
-          <div>
-            <p>1 Index</p>
-          </div>
-          <div>
-            <p>Denumire produs</p>
-          </div>
-          <div>
-            <p>2 m liniari</p>
-          </div>
-          <div>
-            <p>cantiate 2</p>
-          </div>
-          <div>
-            <p>pret unitar 3</p>
-          </div>
-          <div>
-            <p>valoare 20</p>
-          </div>
-          <div>
-            <p>TVA 2</p>
-          </div>
-        </div>
-      </div>
+				{{#each products}}
+					<div class="invoice-product-row">
+						<div><p>{{index-plus-one @index}}</p></div>
+						<div><p style="text-indent: 1px">{{name}}</p></div>
+						<div><p>{{UM}}</p></div>
+						<div><p>{{quantity}}</p></div>
+						<div><p>{{unitPrice}}</p></div>
+						<div><p>{{total-of-product quantity unitPrice}}</p></div>
+						<div><p>{{vat-of-product quantity unitPrice VAT}}</p></div>
+					</div>
+				{{/each}}
+			</div>
 
       <div class="items">
         <p>Semnatura si stampila furnizorului</p>
@@ -456,7 +449,7 @@
       <div class="items">
         <p>Date privind expeditia</p>
         <p>Numele delegatului</p>
-        <p><b>OMER KARAHASANGOLU</b></p>
+        <p><b>{{seller.delegatesName}}</b></p>
         <p>
           Buletinul/cartea de identitate
           ...........................................
@@ -480,16 +473,16 @@
         </p>
       </div>
       <div class="items">
-        <p><b id="invoice-total-rate-without-vat">0.00</b></p>
+        <p><b>{{totalCost}}</b></p>
       </div>
       <div class="items">
-        <p><b id="invoice-total-rate-with-vat">0.00</b></p>
+        <p><b>{{total-vat products}}</b></p>
       </div>
       <div class="items">
         <p>TOTAL</p>
       </div>
       <div class="items">
-        <p><b id="invoice-total-rate">0.00</b></p>
+        <p><b>{{totalCost}}</b></p>
       </div>
       <div class="items">
         <p>Semnatura</p>

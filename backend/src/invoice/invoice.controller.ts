@@ -24,6 +24,15 @@ import * as puppeteer from "puppeteer";
 import * as handlebars from "handlebars";
 import * as fs from "fs";
 import { join, resolve } from "path";
+import {
+	getDateFormatHelper,
+	getIndexPlusOneHelper,
+	getIsCancelledHelper,
+	getNoticeNumberHelper,
+	getTotalOfProductHelper,
+	getTotalVatHelper,
+	getVatOfProductHelper,
+} from "./handlebars-helpers/helpers";
 
 @Controller("invoices")
 export class InvoiceController {
@@ -157,9 +166,7 @@ export class InvoiceController {
 			new this.ObjectId(`${invoiceId}`)
 		);
 		if (!invoice) {
-			throw new NotFoundException(
-				`Nu exista o factura cu id-ul ${invoiceId}`
-			);
+			throw new NotFoundException(`Nu exista o factura cu id-ul ${invoiceId}`);
 		}
 		const templateFile = fs.readFileSync(
 			join(
@@ -171,13 +178,14 @@ export class InvoiceController {
 			),
 			"utf8"
 		);
+		handlebars.registerHelper("notice-number", getNoticeNumberHelper());
+		handlebars.registerHelper("is-cancelled", getIsCancelledHelper());
+		handlebars.registerHelper("date-format", getDateFormatHelper());
+		handlebars.registerHelper("index-plus-one", getIndexPlusOneHelper());
+		handlebars.registerHelper("total-of-product", getTotalOfProductHelper());
+		handlebars.registerHelper("vat-of-product", getVatOfProductHelper());
+		handlebars.registerHelper("total-vat", getTotalVatHelper());
 		const template = handlebars.compile(templateFile);
-		// const data = {
-		// 	title: "My PDF",
-		// 	content:
-		// 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce tincidunt lacus et sapien scelerisque, vel venenatis enim rutrum.",
-		// };
-
 		const html = template(invoice);
 		const browser = await puppeteer.launch();
 		const page = await browser.newPage();

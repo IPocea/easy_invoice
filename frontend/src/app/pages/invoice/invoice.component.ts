@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   IBuyer,
   IContractModel,
+  IHistoryAction,
   IMyCompany,
   IProduct,
   ITokens,
@@ -13,6 +14,7 @@ import {
 import {
   ContractModelService,
   ContractService,
+  HistoryService,
   InvoiceService,
   LoginDataService,
   MyCompanyService,
@@ -75,6 +77,7 @@ export class InvoiceComponent implements OnInit {
   quillModules = quillBasicModule;
   totalRate: number = 0;
   totalVatRate: number = 0;
+  historyActions: IHistoryAction[] = [];
 
   constructor(
     public dialog: MatDialog,
@@ -89,7 +92,8 @@ export class InvoiceComponent implements OnInit {
     private notificationService: NotificationService,
     private productService: ProductService,
     private tokenService: TokenService,
-    private contractService: ContractService
+    private contractService: ContractService,
+    private historyService: HistoryService
   ) {}
 
   ngOnInit(): void {
@@ -106,6 +110,14 @@ export class InvoiceComponent implements OnInit {
     } else {
       this.createInvoice();
     }
+  }
+
+  addPayment(): void {
+
+  }
+
+  deletePayment(): void {
+    
   }
 
   addProduct(): void {
@@ -128,6 +140,8 @@ export class InvoiceComponent implements OnInit {
       this.confirmDialogRef.afterClosed().subscribe((res) => {
         if (res) {
           this.removeProduct(product._id);
+        } else {
+          this.isAddingEditing = false;
         }
       });
     } else {
@@ -186,9 +200,14 @@ export class InvoiceComponent implements OnInit {
     this.refreshToken('contract');
   }
 
-  vewInvoice(): void {
+  viewInvoice(): void {
     this.isAddingEditing = true;
     this.refreshToken('invoice');
+  }
+
+  viewHistory(): void {
+    this.isAddingEditing = true;
+    this.getHistoryActions();
   }
 
   private handleDecimals(control: string, i: number): void {
@@ -254,6 +273,7 @@ export class InvoiceComponent implements OnInit {
           this.myCompany = myCompany[0];
           if (params.toLowerCase() === 'adauga') {
             this.currentInvoice = null;
+            this.historyActions = [];
             this.getContractModels();
           } else {
             this.getInvoice(params);
@@ -603,6 +623,27 @@ export class InvoiceComponent implements OnInit {
             );
           }
           this.isLoading = false;
+        },
+      });
+  }
+
+  private getHistoryActions(): void {
+    this.historyService
+      .getAllOfInvoice(this.currentInvoice._id)
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.isAddingEditing = false;
+        })
+      )
+      .subscribe({
+        next: (historyActions) => {
+          this.historyActions = historyActions;
+          // to do: open a dialog sending historyActions and display them in that dialog
+          console.log(this.historyActions);
+        },
+        error: (err) => {
+          this.notificationService.error(err.error.message);
         },
       });
   }

@@ -12,3 +12,4 @@ export * from './buyer.interface';
 export * from './seller.interface';
 export * from './payment.interface';
 export * from './invoice.interface';
+export * from './history-actions.interface';

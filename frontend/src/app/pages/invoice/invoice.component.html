@@ -265,7 +265,8 @@
           *ngIf="currentInvoice"
           type="button"
           mat-raised-button
-          (click)="vewInvoice()"
+          (click)="viewInvoice()"
+          [disabled]="isAddingEditing"
         >
           Vizualizeaza Factura
         </button>
@@ -274,6 +275,7 @@
           type="button"
           mat-raised-button
           (click)="viewContract()"
+          [disabled]="isAddingEditing"
         >
           Vizualizeaza Contractul
         </button>
@@ -281,7 +283,46 @@
           *ngIf="currentInvoice"
           type="button"
           mat-raised-button
+          (click)="viewHistory()"
+          [disabled]="isAddingEditing"
+        >
+          Vizualizeaza Istoric
+        </button>
+        <button
+          *ngIf="currentInvoice && !currentInvoice.paymentStatus"
+          type="button"
+          color="primary"
+          mat-raised-button
+          (click)="addPayment()"
+          [disabled]="isAddingEditing"
+        >
+          Adauga plata
+        </button>
+        <button
+          *ngIf="currentInvoice && currentInvoice.paymentStatus"
+          type="button"
           color="accent"
+          mat-raised-button
+          (click)="deletePayment()"
+          [disabled]="isAddingEditing"
+        >
+          Sterge plata
+        </button>
+        <button
+          *ngIf="currentInvoice"
+          type="button"
+          mat-raised-button
+          color="accent"
+          [disabled]="isAddingEditing"
+        >
+          Anuleaza factura
+        </button>
+        <button
+          *ngIf="currentInvoice && currentUser.role.toLowerCase() === 'admin'"
+          type="button"
+          mat-raised-button
+          color="accent"
+          [disabled]="isAddingEditing"
         >
           Sterge Factura
         </button>

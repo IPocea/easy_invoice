@@ -8,7 +8,6 @@ import { HistoryAction, HistoryDocument } from "./schemas/history-model.schema";
 
 @Injectable()
 export class HistoryService {
-	private ObjectId = Types.ObjectId;
 	constructor(
 		@InjectModel(HistoryAction.name)
 		private historyModel: Model<HistoryDocument>
@@ -27,6 +26,14 @@ export class HistoryService {
 		try {
 			const action = await this.historyModel.findOne(query);
 			return action;
+		} catch (error) {
+			return null;
+		}
+	}
+
+	async findAllOfInvoice(invoiceId: Types.ObjectId): Promise<IHistoryAction[]> {
+		try {
+			return await this.historyModel.find({ invoiceId: invoiceId });
 		} catch (error) {
 			return null;
 		}
