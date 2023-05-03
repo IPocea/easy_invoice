@@ -18,7 +18,6 @@ export class BuyerService {
 			const createdBuyer = new this.buyerModel(newBuyer);
 			return await createdBuyer.save();
 		} catch (error) {
-			console.log(error);
 			return null;
 		}
 	}
@@ -68,7 +67,6 @@ export class BuyerService {
 				await this.deleteOne(actualBuyer._id);
 				const newBuyerDto = updateBuyerDto as CreateBuyerDto;
 				const newBuyer = await this.create(newBuyerDto);
-				console.log(newBuyer)
 				return newBuyer;
 			}
 		} catch (error) {

@@ -53,18 +53,21 @@ export class PaymentService {
 		try {
 			const aggArray = getInvoiceFromPaymentsController(invoiceId);
 			const payment = await this.create(newPayment);
-			const invoiceResult = await this.invoiceModel.aggregate(aggArray);
-			const invoice: IInvoice = invoiceResult[0];
-			if (invoice) {
-				this.invoiceModel.findOneAndUpdate(
-					{ _id: invoiceId },
-					{
-						paymentStatus:
-							invoice.totalPayments >= invoice.totalCost ? true : false,
-						editedBy: user.firstName + " " + user.lastName,
-					},
-					{ new: true }
-				);
+			if (payment) {
+				const invoiceResult = await this.invoiceModel.aggregate(aggArray);
+				const invoice: IInvoice = invoiceResult[0];
+				if (invoice) {
+					const paymentStatus =
+						invoice.totalPayments >= invoice.totalCost ? true : false;
+					await this.invoiceModel.findOneAndUpdate(
+						{ _id: invoiceId },
+						{
+							paymentStatus: paymentStatus,
+							editedBy: user.firstName + " " + user.lastName,
+						},
+						{ new: true }
+					);
+				}
 			}
 			return payment;
 		} catch (error) {

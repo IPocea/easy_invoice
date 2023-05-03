@@ -56,11 +56,19 @@ export class InvoiceService {
 
 	async create(newFullInvoice: CreateFullInvoiceDto): Promise<IInvoice> {
 		try {
+			if (newFullInvoice.invoice.companyId) {
+				newFullInvoice.invoice.companyId = new this.ObjectId(
+					`${newFullInvoice.invoice.companyId}`
+				);
+			} else {
+				newFullInvoice.invoice.individualId = new this.ObjectId(
+					`${newFullInvoice.invoice.individualId}`
+				);
+			}
 			const invoice = new this.invoiceModel(newFullInvoice.invoice);
 			await invoice.save();
 			const buyerDto = newFullInvoice.buyer;
 			buyerDto.invoiceId = invoice._id;
-			// delete buyerDto._id;
 			const buyer = await this.buyerService.create(buyerDto);
 			const sellerDto = newFullInvoice.seller;
 			sellerDto.invoiceId = invoice._id;
@@ -91,9 +99,16 @@ export class InvoiceService {
 		invoiceId: Types.ObjectId
 	): Promise<IInvoice> {
 		try {
-			console.log(updateFullInvoice);
 			updateFullInvoice.buyer.invoiceId = invoiceId;
-
+			if (updateFullInvoice.invoice.companyId) {
+				updateFullInvoice.invoice.companyId = new this.ObjectId(
+					`${updateFullInvoice.invoice.companyId}`
+				);
+			} else {
+				updateFullInvoice.invoice.individualId = new this.ObjectId(
+					`${updateFullInvoice.invoice.individualId}`
+				);
+			}
 			await this.buyerService.updateOneByInvoiceId(
 				invoiceId,
 				updateFullInvoice.buyer

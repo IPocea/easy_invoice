@@ -35,12 +35,23 @@
 <div class="table-container mat-elevation-z8">
   <mat-table [dataSource]="dataSource">
     <ng-container *ngFor="let col of displayedColumns" [matColumnDef]="col">
-      <ng-container *ngIf="col !== '_id' && col !== 'createdAt'">
+      <ng-container *ngIf="col === 'paymentAmount'">
         <mat-header-cell *matHeaderCellDef>
           {{ col | wordSeparator }}
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
-          <small>{{ row[col] }}</small>
+          <small [ngClass]="row[col] >= 0 ? 'text-success' : 'text-danger'"
+            >{{ row[col] | currency : "" : "" }} RON</small
+          >
+        </mat-cell>
+      </ng-container>
+
+      <ng-container *ngIf="col === 'addedBy'">
+        <mat-header-cell *matHeaderCellDef>
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <small>{{ row[col] }} </small>
         </mat-cell>
       </ng-container>
 
@@ -60,7 +71,7 @@
         <mat-cell *matCellDef="let row">
           <button
             *ngIf="currentUser.role === 'admin'"
-            matTooltip="Sterge societatea"
+            matTooltip="Sterge plata"
             (click)="deletePayment(row[col])"
           >
             <mat-icon>delete</mat-icon>

@@ -1,5 +1,4 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	Get,
@@ -30,26 +29,20 @@ export class PaymentController {
 	async getAllOfInvoice(
 		@Param("invoiceId") invoiceId: string
 	): Promise<IPayment[]> {
-		if (!this.ObjectId.isValid(invoiceId)) {
-			throw new BadRequestException("Formatul de id introdus nu este valid");
-		}
 		return await this.paymentService.findAllOfInvoice(
 			new this.ObjectId(`${invoiceId}`)
 		);
 	}
 
 	@UseGuards(AccesTokenGuard)
-	@Post(":invoiceId/add")
+	@Post("add")
 	async addPayment(
 		@Body() paymentDto: CreatePaymentDto,
-		@Param("invoiceId") invoiceId: string,
 		@Req() req
 	): Promise<IPayment[]> {
-		if (!this.ObjectId.isValid(invoiceId)) {
-			throw new BadRequestException("Formatul de id introdus nu este valid");
-		}
 		const user = req.user;
-		const invoiceObjectId = new this.ObjectId(`${invoiceId}`);
+		const invoiceObjectId = new this.ObjectId(`${paymentDto.invoiceId}`);
+		paymentDto.invoiceId = invoiceObjectId;
 		const result =
 			await this.paymentService.createAndUpdateInvoicePaymentStatus(
 				paymentDto,

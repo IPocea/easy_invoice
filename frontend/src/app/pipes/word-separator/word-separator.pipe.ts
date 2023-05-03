@@ -50,7 +50,7 @@ export class WordSeparatorPipe implements PipeTransform {
         return 'Plati de incasat';
       case 'Total Payments':
         return 'Plati incasate';
-      case 'paymentAmount':
+      case 'Payment Amount':
         return 'Valoare plata';  
       default:
         return newValue;

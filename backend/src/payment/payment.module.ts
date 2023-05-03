@@ -1,11 +1,15 @@
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, RequestMethod } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { PaymentController } from "./payment.controller";
 import { PaymentService } from "./payment.service";
 import { Payment, PaymentSchema } from "./schemas/payment.schema";
 import { Invoice, InvoiceSchema } from "src/invoice/schemas/invoice.schema";
 import { Product, ProductSchema } from "src/product/schemas/product.schema";
-import { HistoryAction, HistorySchema } from "src/history/schemas/history-model.schema";
+import {
+	HistoryAction,
+	HistorySchema,
+} from "src/history/schemas/history-model.schema";
+import { VerifyPaymentCreate, VerifyPaymentGet } from "./middleware";
 
 @Module({
 	imports: [
@@ -20,4 +24,13 @@ import { HistoryAction, HistorySchema } from "src/history/schemas/history-model.
 	providers: [PaymentService],
 	exports: [PaymentService],
 })
-export class PaymentModule {}
+export class PaymentModule {
+	configure(consumer: MiddlewareConsumer) {
+		consumer
+			.apply(VerifyPaymentCreate)
+			.forRoutes({ path: "payments/add", method: RequestMethod.POST });
+		consumer
+			.apply(VerifyPaymentGet)
+			.forRoutes({ path: "payments/:invoiceId", method: RequestMethod.GET});
+	}
+}

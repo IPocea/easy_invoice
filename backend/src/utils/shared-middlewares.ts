@@ -1,16 +1,22 @@
 import { BadRequestException } from "@nestjs/common";
-import { emailRegexpPattern, passwordRegexpPattern } from './regexp-patterns';
+import { emailRegexpPattern, passwordRegexpPattern } from "./regexp-patterns";
+import { Types } from "mongoose";
 
 const ROLES: string[] = ["user", "admin"];
 const emailPattern = emailRegexpPattern;
 const passwordPattern = passwordRegexpPattern;
+const ObjectId = Types.ObjectId;
 
 export function checkEmptyInputs(...args: string[]): void {
 	for (const arg of args) {
 		if (typeof arg !== "number" && !arg) {
-			throw new BadRequestException("Te rugam sa completezi toate campurile obligatorii");
-		} else if (arg === '' || arg === undefined || arg === null) {
-			throw new BadRequestException("Te rugam sa completezi toate campurile obligatorii");
+			throw new BadRequestException(
+				"Te rugam sa completezi toate campurile obligatorii"
+			);
+		} else if (arg === "" || arg === undefined || arg === null) {
+			throw new BadRequestException(
+				"Te rugam sa completezi toate campurile obligatorii"
+			);
 		}
 	}
 }
@@ -35,5 +41,13 @@ export function checkPasswordPattern(password: string): void {
 export function checkEmailPattern(email: string): void {
 	if (!emailPattern.test(email)) {
 		throw new BadRequestException("Email invalid!");
+	}
+}
+
+export function checkIdValidity(...args: string[]): void {
+	for (const arg of args) {
+		if (!ObjectId.isValid(arg)) {
+			throw new BadRequestException("Formatul de id este invalid");
+		}
 	}
 }

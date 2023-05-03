@@ -16,9 +16,9 @@ export class PaymentService {
     );
   }
 
-  addPayment(invoiceId: string, paymentBody: IPayment): Observable<IPayment[]> {
+  addPayment(paymentBody: IPayment): Observable<IPayment[]> {
     return this.http.post<IPayment[]>(
-      environment.baseUrl + `payments/${invoiceId}/add`,
+      environment.baseUrl + `payments/add`,
       paymentBody
     );
   }

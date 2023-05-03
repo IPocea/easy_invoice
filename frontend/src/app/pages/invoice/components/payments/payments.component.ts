@@ -39,7 +39,7 @@ export class PaymentsComponent implements OnInit {
   private createPayment(paymentBody: IPayment): void {
     this.isAdding = true;
     this.paymentService
-      .addPayment(this.currentInvoice._id, paymentBody)
+      .addPayment(paymentBody)
       .pipe(
         take(1),
         finalize(() => {

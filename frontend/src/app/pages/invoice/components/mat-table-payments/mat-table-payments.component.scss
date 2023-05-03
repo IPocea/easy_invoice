@@ -2,8 +2,9 @@
 
 :host {
   div.table-header {
+    display: flex;
+    flex-direction: column;
     form {
-      width: 100%;
       display: flex;
       flex-direction: column;
       gap: 5px;
@@ -20,6 +21,10 @@
           flex: 1;
         }
       }
+    }
+    .mat-header-row,
+    .mat-row {
+      display: flex;
     }
   }
 }

@@ -121,7 +121,7 @@ export class InvoiceComponent implements OnInit {
     });
     this.paymentsDialogRef.componentInstance.invoiceId =
       this.currentInvoice._id;
-    this.paymentsDialogRef.componentInstance.currentUser = this.currentUser;  
+    this.paymentsDialogRef.componentInstance.currentUser = this.currentUser;
     this.paymentsDialogRef.afterClosed().subscribe((res) => {
       if (res?.event === 'Close Payments') {
         this.getInvoice(this.currentInvoice._id);
@@ -175,9 +175,7 @@ export class InvoiceComponent implements OnInit {
     this.addChangeBuyerRef.afterClosed().subscribe((res) => {
       if (res?.event === 'Send Buyer') {
         this.setBuyerForm(res.buyer);
-        console.log(this.addEditInvoiceForm.value.invoice);
         this.setInvoiceForm(res.buyer);
-        console.log(this.addEditInvoiceForm.value);
       }
     });
   }
@@ -195,7 +193,6 @@ export class InvoiceComponent implements OnInit {
         this.addEditInvoiceForm.controls['contract'].patchValue({
           contractModel: this.selectedContractModel,
         });
-        console.log(this.addEditInvoiceForm.value);
       }
     });
   }
@@ -365,7 +362,6 @@ export class InvoiceComponent implements OnInit {
       .subscribe({
         next: (invoice) => {
           this.currentInvoice = invoice;
-          console.log(this.currentInvoice);
           if (this.currentInvoice.buyer.CUI) {
             this.doesInvoiceBelongsToCompany = true;
           } else {
@@ -489,7 +485,6 @@ export class InvoiceComponent implements OnInit {
       this.myCompany,
       existingProducts
     );
-    console.log(this.addEditInvoiceForm.value);
   }
 
   private setBuyerForm(buyer: IBuyer): void {
@@ -651,7 +646,6 @@ export class InvoiceComponent implements OnInit {
         next: (historyActions) => {
           this.historyActions = historyActions;
           // to do: open a dialog sending historyActions and display them in that dialog
-          console.log(this.historyActions);
         },
         error: (err) => {
           this.notificationService.error(err.error.message);
