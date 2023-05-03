@@ -15,3 +15,4 @@ export * from './invoice/invoice.service';
 export * from './product/product.service';
 export * from './contract/contract.service';
 export * from './history/history.service';
+export * from './payment/payment.service';

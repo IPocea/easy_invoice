@@ -293,20 +293,10 @@
           type="button"
           color="primary"
           mat-raised-button
-          (click)="addPayment()"
+          (click)="managePayments()"
           [disabled]="isAddingEditing"
         >
-          Adauga plata
-        </button>
-        <button
-          *ngIf="currentInvoice && currentInvoice.paymentStatus"
-          type="button"
-          color="accent"
-          mat-raised-button
-          (click)="deletePayment()"
-          [disabled]="isAddingEditing"
-        >
-          Sterge plata
+          Plati
         </button>
         <button
           *ngIf="currentInvoice"

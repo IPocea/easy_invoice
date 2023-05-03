@@ -19,32 +19,41 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { AddChangeBuyerComponent } from './components/add-change-buyer/add-change-buyer.component';
 import { SelectContractModelComponent } from './components/select-contract-model/select-contract-model.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { PaymentsComponent } from './components/payments/payments.component';
+import { MatTablePaymentsComponent } from './components/mat-table-payments/mat-table-payments.component';
+import { MatTableModule } from '@angular/material/table';
+import { SharedModule } from "../../shared/modules/shared.module";
+
 
 @NgModule({
-  declarations: [
-    InvoiceComponent,
-    AddChangeBuyerComponent,
-    SelectContractModelComponent,
-  ],
-  imports: [
-    CommonModule,
-    InvoiceRoutingModule,
-    MatProgressSpinnerModule,
-    MatIconModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    MatTooltipModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatDialogModule,
-    DragDropModule,
-    FormsModule,
-    MatButtonToggleModule,
-    QuillModule.forRoot(),
-  ],
-  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'ro-RO' }],
+    declarations: [
+        InvoiceComponent,
+        AddChangeBuyerComponent,
+        SelectContractModelComponent,
+        PaymentsComponent,
+        MatTablePaymentsComponent,
+    ],
+    providers: [{ provide: MAT_DATE_LOCALE, useValue: 'ro-RO' }],
+    imports: [
+        CommonModule,
+        InvoiceRoutingModule,
+        MatProgressSpinnerModule,
+        MatIconModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatButtonModule,
+        MatTooltipModule,
+        MatInputModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatDialogModule,
+        DragDropModule,
+        FormsModule,
+        MatButtonToggleModule,
+        MatTableModule,
+        QuillModule.forRoot(),
+        SharedModule
+    ]
 })
 export class InvoiceModule {}

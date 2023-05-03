@@ -6,7 +6,14 @@ import { CreatePaymentDto } from "./dto";
 import { IPayment } from "./interface/payment.interface";
 import { Payment, PaymentDocument } from "./schemas/payment.schema";
 import { multiply } from "src/utils/shared-operators";
-import { getAllOfInvoiceAggArray, getOneByIdAggArray } from "./utils";
+import {
+	getAllOfInvoiceAggArray,
+	getInvoiceFromPaymentsController,
+	getOneByIdAggArray,
+} from "./utils";
+import { Invoice, InvoiceDocument } from "src/invoice/schemas/invoice.schema";
+import { IInvoice } from "src/invoice/interface/invoice.interface";
+import { IUser } from "src/users/interface/user.interface";
 
 @Injectable()
 export class PaymentService {
@@ -14,7 +21,9 @@ export class PaymentService {
 
 	constructor(
 		@InjectModel(Payment.name)
-		private paymentModel: Model<PaymentDocument>
+		private paymentModel: Model<PaymentDocument>,
+		@InjectModel(Invoice.name)
+		private invoiceModel: Model<InvoiceDocument>
 	) {}
 
 	async findAllOfInvoice(invoiceId: Types.ObjectId): Promise<IPayment[]> {
@@ -31,6 +40,33 @@ export class PaymentService {
 			newPayment.paymentAmount = multiply(newPayment.paymentAmount, 100);
 			const createdPayment = new this.paymentModel(newPayment);
 			return await createdPayment.save();
+		} catch (error) {
+			return null;
+		}
+	}
+
+	async createAndUpdateInvoicePaymentStatus(
+		newPayment: CreatePaymentDto,
+		invoiceId: Types.ObjectId,
+		user: IUser
+	): Promise<IPayment> {
+		try {
+			const aggArray = getInvoiceFromPaymentsController(invoiceId);
+			const payment = await this.create(newPayment);
+			const invoiceResult = await this.invoiceModel.aggregate(aggArray);
+			const invoice: IInvoice = invoiceResult[0];
+			if (invoice) {
+				this.invoiceModel.findOneAndUpdate(
+					{ _id: invoiceId },
+					{
+						paymentStatus:
+							invoice.totalPayments >= invoice.totalCost ? true : false,
+						editedBy: user.firstName + " " + user.lastName,
+					},
+					{ new: true }
+				);
+			}
+			return payment;
 		} catch (error) {
 			return null;
 		}

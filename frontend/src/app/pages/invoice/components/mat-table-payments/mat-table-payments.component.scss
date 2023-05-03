@@ -1,0 +1,25 @@
+@use "src/styles/mixins.scss" as mixins;
+
+:host {
+  div.table-header {
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+  }
+  @include mixins.mat-table();
+
+  @media screen and (min-width: 820px) {
+    div.table-header {
+      form {
+        flex-direction: row;
+        align-items: baseline;
+        mat-form-field {
+          flex: 1;
+        }
+      }
+    }
+  }
+}

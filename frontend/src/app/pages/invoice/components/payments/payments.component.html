@@ -1,0 +1,37 @@
+<ng-container *ngIf="!isLoading; else loading">
+  <header
+    cdkDrag
+    cdkDragRootElement=".cdk-overlay-pane"
+    cdkDragHandle
+    class="dialog-title"
+  >
+    <h4>Plati</h4>
+  </header>
+
+  <main mat-dialog-content>
+    <app-mat-table-payments
+      [payments]="payments"
+      [currentInvoice]="currentInvoice"
+      [currentUser]="currentUser"
+      (sendAddReq)="addPayment($event)"
+    ></app-mat-table-payments>
+    <button
+      mat-raised-button
+      color="accent"
+      [disabled]="isAdding"
+      (click)="closeDialog()"
+    >
+      Inchide
+    </button>
+  </main>
+</ng-container>
+
+<ng-template #noPayments>
+  <p>Nu exista plati in acest moment</p>
+</ng-template>
+
+<ng-template #loading>
+  <div class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

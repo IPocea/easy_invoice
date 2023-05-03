@@ -113,6 +113,7 @@ export const allInvoiceAggrArray: any = [
 			totalCost: 1,
 			totalPayments: 1,
 			typeOfInvoice: 1,
+			paymentStatus: 1,
 			series: 1,
 			number: 1,
 			date: 1,

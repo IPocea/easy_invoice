@@ -46,6 +46,7 @@ import {
   setInvoiceFormFunc,
 } from './utils';
 import { HttpErrorResponse } from '@angular/common/http';
+import { PaymentsComponent } from './components/payments/payments.component';
 
 class PreserveWhiteSpace {
   constructor(private quill: any, private options: {}) {
@@ -74,6 +75,7 @@ export class InvoiceComponent implements OnInit {
   addChangeBuyerRef: MatDialogRef<AddChangeBuyerComponent>;
   selectContractModelRef: MatDialogRef<SelectContractModelComponent>;
   confirmDialogRef: MatDialogRef<ConfirmationDialogComponent>;
+  paymentsDialogRef: MatDialogRef<PaymentsComponent>;
   quillModules = quillBasicModule;
   totalRate: number = 0;
   totalVatRate: number = 0;
@@ -112,12 +114,21 @@ export class InvoiceComponent implements OnInit {
     }
   }
 
-  addPayment(): void {
-
-  }
-
-  deletePayment(): void {
-    
+  managePayments(): void {
+    this.isAddingEditing = true;
+    this.paymentsDialogRef = this.dialog.open(PaymentsComponent, {
+      disableClose: true,
+    });
+    this.paymentsDialogRef.componentInstance.invoiceId =
+      this.currentInvoice._id;
+    this.paymentsDialogRef.componentInstance.currentUser = this.currentUser;  
+    this.paymentsDialogRef.afterClosed().subscribe((res) => {
+      if (res?.event === 'Close Payments') {
+        this.getInvoice(this.currentInvoice._id);
+      } else {
+        this.isAddingEditing = false;
+      }
+    });
   }
 
   addProduct(): void {
