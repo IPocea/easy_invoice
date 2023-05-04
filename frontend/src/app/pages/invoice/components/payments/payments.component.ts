@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { IInvoice, IPayment, IUser } from '@interfaces';
+import { IInvoice, IPayment, IPaymentId, IUser } from '@interfaces';
 import { InvoiceService, NotificationService, PaymentService } from '@services';
 import { finalize, take } from 'rxjs';
 
@@ -36,6 +36,10 @@ export class PaymentsComponent implements OnInit {
     this.createPayment(Ev);
   }
 
+  deletePayment(Ev: IPaymentId): void {
+    this.removePayment(Ev);
+  }
+
   private createPayment(paymentBody: IPayment): void {
     this.isAdding = true;
     this.paymentService
@@ -50,6 +54,27 @@ export class PaymentsComponent implements OnInit {
         next: (payments) => {
           this.payments = payments;
           this.notificationService.info('Plata a fost adaugata cu succes');
+        },
+        error: (err) => {
+          this.notificationService.error(err.error.message);
+        },
+      });
+  }
+
+  private removePayment(Ev: IPaymentId): void {
+    this.isAdding = true;
+    this.paymentService
+      .deletePayment(Ev)
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.isAdding = false;
+        })
+      )
+      .subscribe({
+        next: (payments) => {
+          this.payments = payments;
+          this.notificationService.info('Plata a fost stearsa cu succes');
         },
         error: (err) => {
           this.notificationService.error(err.error.message);

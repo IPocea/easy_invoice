@@ -1,6 +1,7 @@
 import {
 	Body,
 	Controller,
+	Delete,
 	Get,
 	Param,
 	Post,
@@ -14,6 +15,7 @@ import { IPayment } from "./interface/payment.interface";
 import { CreatePaymentDto } from "./dto";
 import { HistoryService } from "src/history/history.service";
 import { divide } from "src/utils/shared-operators";
+import { checkAdminRole } from "src/users/helpers/check-admin-role";
 
 @Controller("payments")
 export class PaymentController {
@@ -55,6 +57,35 @@ export class PaymentController {
 					result.paymentAmount,
 					100
 				)} RON a fost adaugata`,
+				addedBy: user.firstName + " " + user.lastName,
+				invoiceId: invoiceObjectId,
+			});
+		}
+
+		return await this.paymentService.findAllOfInvoice(invoiceObjectId);
+	}
+
+	@UseGuards(AccesTokenGuard)
+	@Delete(":paymentId/:invoiceId/delete-payment")
+	async deletePayment(
+		@Param("paymentId") paymentId: string,
+		@Param("invoiceId") invoiceId: string,
+		@Req() req
+	): Promise<IPayment[]> {
+		const user = req.user;
+		checkAdminRole(user.role);
+		const paymentObjectId = new this.ObjectId(`${paymentId}`);
+		const invoiceObjectId = new this.ObjectId(`${invoiceId}`);
+		const initialPayment = await this.paymentService.findOne(paymentObjectId);
+		const result =
+			await this.paymentService.deleteAndUpdateInvoicePaymentStatus(
+				paymentObjectId,
+				invoiceObjectId,
+				user
+			);
+		if (result) {
+			await this.historyService.create({
+				actionDescription: `Plata de ${initialPayment.paymentAmount} RON a fost stearsa`,
 				addedBy: user.firstName + " " + user.lastName,
 				invoiceId: invoiceObjectId,
 			});

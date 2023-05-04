@@ -22,7 +22,11 @@ import { PaymentService } from "src/payment/payment.service";
 import { Contract, ContractSchema } from "src/contract/schemas/contract.schema";
 import { ContractModule } from "src/contract/contract.module";
 import { ContractService } from "src/contract/contract.service";
-import { VerifyInvoiceCreate, VerifyInvoiceUpdate } from "./middleware";
+import {
+	VerifyInvoiceCreate,
+	VerifyInvoiceToggleStatus,
+	VerifyInvoiceUpdate,
+} from "./middleware";
 
 @Module({
 	imports: [
@@ -58,8 +62,14 @@ export class InvoiceModule {
 			.apply(VerifyInvoiceCreate)
 			.forRoutes({ path: "invoices/add", method: RequestMethod.POST });
 		consumer.apply(VerifyInvoiceUpdate).forRoutes({
-			path: "invoices/:id/edit-full-invoice",
+			path: "invoices/:invoiceId/edit-full-invoice",
 			method: RequestMethod.PATCH,
 		});
+		consumer
+			.apply(VerifyInvoiceToggleStatus)
+			.forRoutes({
+				path: "invoices/:invoiceId/toggle-status",
+				method: RequestMethod.PATCH,
+			});
 	}
 }

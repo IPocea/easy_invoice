@@ -7,8 +7,10 @@ import {
   SimpleChange,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { IInvoice, IPayment, IUser } from '@interfaces';
+import { IInvoice, IPayment, IPaymentId, IUser } from '@interfaces';
+import { ConfirmationDialogComponent } from '@shared/components/confirmation-dialog/confirmation-dialog.component';
 import { cleanForm } from '@utils/form-group';
 
 @Component({
@@ -21,12 +23,14 @@ export class MatTablePaymentsComponent implements OnInit {
   @Input() payments: IPayment[];
   @Input() currentUser: IUser;
   @Output() sendAddReq = new EventEmitter<IPayment>();
+  @Output() sendDeleteReq = new EventEmitter<IPaymentId>();
   isAdding: boolean = false;
   addPaymentForm: FormGroup;
   dataSource = new MatTableDataSource<IPayment>();
   displayedColumns: string[] = [];
+  confirmDialogRef: MatDialogRef<ConfirmationDialogComponent>;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(public dialog: MatDialog, private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.setForm();
@@ -46,7 +50,25 @@ export class MatTablePaymentsComponent implements OnInit {
     this.sendAddReq.emit(this.addPaymentForm.value);
   }
 
-  deletePayment(paymentId: string): void {}
+  deletePayment(paymentId: string): void {
+    this.isAdding = true;
+    this.confirmDialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      disableClose: true,
+    });
+    this.confirmDialogRef.componentInstance.title = 'Sterge Plata';
+    this.confirmDialogRef.componentInstance.content =
+      'Esti sigur ca doresti sa stergi aceasta plata?';
+    this.confirmDialogRef.afterClosed().subscribe((res) => {
+      if (res) {
+        this.sendDeleteReq.emit({
+          paymentId: paymentId,
+          invoiceId: this.currentInvoice._id,
+        });
+      } else {
+        this.isAdding = false;
+      }
+    });
+  }
 
   handleProductInputs(): void {
     this.isAdding = true;

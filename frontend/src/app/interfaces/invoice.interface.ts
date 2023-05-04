@@ -46,8 +46,14 @@ export interface IInvoice {
 
 export interface ICreateInvoice {
   invoice: IInvoice;
-	buyer: IBuyer;
-	seller: ISeller;
-	contract: IContract;
-	products: IProduct[];
+  buyer: IBuyer;
+  seller: ISeller;
+  contract: IContract;
+  products: IProduct[];
+}
+
+export interface IToggleInvoiceStatus {
+  isCancelled: boolean;
+  editedBy: string;
+  cancellationNotices?: string;
 }

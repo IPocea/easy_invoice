@@ -9,7 +9,11 @@ import {
 	HistoryAction,
 	HistorySchema,
 } from "src/history/schemas/history-model.schema";
-import { VerifyPaymentCreate, VerifyPaymentGet } from "./middleware";
+import {
+	VerifyPaymentCreate,
+	VerifyPaymentDelete,
+	VerifyPaymentGet,
+} from "./middleware";
 
 @Module({
 	imports: [
@@ -31,6 +35,12 @@ export class PaymentModule {
 			.forRoutes({ path: "payments/add", method: RequestMethod.POST });
 		consumer
 			.apply(VerifyPaymentGet)
-			.forRoutes({ path: "payments/:invoiceId", method: RequestMethod.GET});
+			.forRoutes({ path: "payments/:invoiceId", method: RequestMethod.GET });
+		consumer
+			.apply(VerifyPaymentDelete)
+			.forRoutes({
+				path: "payments/:paymentId/:invoiceId/delete-payment",
+				method: RequestMethod.DELETE,
+			});
 	}
 }

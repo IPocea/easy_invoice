@@ -33,7 +33,9 @@ export class HistoryService {
 
 	async findAllOfInvoice(invoiceId: Types.ObjectId): Promise<IHistoryAction[]> {
 		try {
-			return await this.historyModel.find({ invoiceId: invoiceId });
+			return await this.historyModel
+				.find({ invoiceId: invoiceId })
+				.sort({ createdAt: -1 });
 		} catch (error) {
 			return null;
 		}

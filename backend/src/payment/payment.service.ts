@@ -78,34 +78,66 @@ export class PaymentService {
 	async findOne(paymentId: Types.ObjectId): Promise<IPayment> {
 		try {
 			const aggrArray = getOneByIdAggArray(paymentId);
-			const payment = await this.paymentModel.aggregate(aggrArray)[0];
-			return payment;
+			const paymentArray = await this.paymentModel.aggregate(aggrArray);
+			return paymentArray[0];
 		} catch (error) {
 			return null;
 		}
 	}
 
-	async deleteOne(paymentId: string): Promise<IMessageResponse> {
+	async deleteOne(paymentId: Types.ObjectId): Promise<IMessageResponse> {
 		try {
 			await this.paymentModel.deleteOne({
-				_id: new this.ObjectId(`${paymentId}`),
+				_id: paymentId,
 			});
 			return {
-				message: `Plata cu id-ul ${paymentId} a fost sters`,
+				message: `Plata cu id-ul ${paymentId.toString()} a fost sters`,
 			};
 		} catch (error) {
 			return null;
 		}
 	}
 
-	async deleteManyById(invoiceId: string): Promise<IMessageResponse> {
+	async deleteAndUpdateInvoicePaymentStatus(
+		paymentId: Types.ObjectId,
+		invoiceId: Types.ObjectId,
+		user: IUser
+	): Promise<IMessageResponse> {
+		try {
+			const aggArray = getInvoiceFromPaymentsController(invoiceId);
+			const deleteResult = await this.deleteOne(paymentId);
+			if (deleteResult) {
+				const invoiceResult = await this.invoiceModel.aggregate(aggArray);
+				const invoice: IInvoice = invoiceResult[0];
+				if (invoice) {
+					const paymentStatus =
+						invoice.totalPayments >= invoice.totalCost ? true : false;
+					await this.invoiceModel.findOneAndUpdate(
+						{ _id: invoiceId },
+						{
+							paymentStatus: paymentStatus,
+							editedBy: user.firstName + " " + user.lastName,
+						},
+						{ new: true }
+					);
+				}
+				return { message: "Plata a fost stearsa cu succes" };
+			} else {
+				return null;
+			}
+		} catch (error) {
+			return null;
+		}
+	}
+
+	async deleteManyById(invoiceId: Types.ObjectId): Promise<IMessageResponse> {
 		try {
 			const result = await this.paymentModel.deleteMany({
-				_id: new this.ObjectId(`${invoiceId}`),
+				invoiceId: invoiceId,
 			});
 			if (result) {
 				return {
-					message: `Platile pentru factura cu id-ul ${invoiceId} au fost sterse`,
+					message: `Platile pentru factura cu id-ul ${invoiceId.toString()} au fost sterse`,
 				};
 			}
 		} catch (error) {

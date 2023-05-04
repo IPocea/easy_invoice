@@ -14,6 +14,7 @@
       [currentInvoice]="currentInvoice"
       [currentUser]="currentUser"
       (sendAddReq)="addPayment($event)"
+      (sendDeleteReq)="deletePayment($event)"
     ></app-mat-table-payments>
     <button
       mat-raised-button

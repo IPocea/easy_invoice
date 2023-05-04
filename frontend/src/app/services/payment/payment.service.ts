@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { IPayment } from '@interfaces';
+import { IPayment, IPaymentId } from '@interfaces';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
@@ -20,6 +20,13 @@ export class PaymentService {
     return this.http.post<IPayment[]>(
       environment.baseUrl + `payments/add`,
       paymentBody
+    );
+  }
+
+  deletePayment(paymentId: IPaymentId): Observable<IPayment[]> {
+    return this.http.delete<IPayment[]>(
+      environment.baseUrl +
+        `payments/${paymentId.paymentId}/${paymentId.invoiceId}/delete-payment`
     );
   }
 }

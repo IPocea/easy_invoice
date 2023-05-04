@@ -8,3 +8,8 @@ export interface IPayment {
 	updatedAt?: Date;
 	__v?: number;
 }
+
+export interface IPaymentId {
+	paymentId: string;
+	invoiceId?: string;
+}

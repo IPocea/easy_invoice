@@ -5,7 +5,10 @@ import {
 } from "@nestjs/common";
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
-import { checkEmptyInputs } from "../../utils/shared-middlewares";
+import {
+	checkEmptyInputs,
+	checkIdValidity,
+} from "../../utils/shared-middlewares";
 import { InvoiceService } from "../invoice.service";
 
 @Injectable()
@@ -41,6 +44,8 @@ export class VerifyInvoiceUpdate implements NestMiddleware {
 			);
 		}
 
+		checkIdValidity(req.params.invoiceId);
+
 		if (!req.body.invoice.companyId && !req.body.invoice.individualId) {
 			throw new BadRequestException(
 				"Factura trebuie sa apartina unei societati sau persoane fizice"
@@ -55,9 +60,9 @@ export class VerifyInvoiceUpdate implements NestMiddleware {
 				"Te rugam sa completezi toate campurile obligatorii"
 			);
 		}
-    
+
 		const invoice = await this.invoiceService.findOne({
-			_id: new this.ObjectId(`${req.params.id}`),
+			_id: new this.ObjectId(`${req.params.invoiceId}`),
 		});
 
 		if (req.body.invoice.number !== invoice.number) {
@@ -72,7 +77,7 @@ export class VerifyInvoiceUpdate implements NestMiddleware {
 				);
 			}
 		}
-		
+
 		next();
 	}
 }

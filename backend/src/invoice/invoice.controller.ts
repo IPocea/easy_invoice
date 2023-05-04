@@ -17,7 +17,11 @@ import { Types } from "mongoose";
 import { AccesTokenGuard } from "src/auth/guards/access-token-guard";
 import { HistoryService } from "src/history/history.service";
 import { IMessageResponse, IQueryParams } from "src/utils/shared-interface";
-import { CreateFullInvoiceDto, UpdateFullInvoiceDto } from "./dto";
+import {
+	CreateFullInvoiceDto,
+	UpdateFullInvoiceDto,
+	UpdateInvoiceDto,
+} from "./dto";
 import { IInvoice, IInvoicePagination } from "./interface/invoice.interface";
 import { InvoiceService } from "./invoice.service";
 import * as puppeteer from "puppeteer";
@@ -49,8 +53,10 @@ export class InvoiceController {
 	}
 
 	@UseGuards(AccesTokenGuard)
-	@Get(":id")
-	async findOneFullData(@Param("id") invoiceId: string): Promise<IInvoice> {
+	@Get(":invoiceId")
+	async findOneFullData(
+		@Param("invoiceId") invoiceId: string
+	): Promise<IInvoice> {
 		try {
 			const invoice = await this.invoiceService.findOneFullData(
 				new this.ObjectId(`${invoiceId}`)
@@ -85,10 +91,10 @@ export class InvoiceController {
 	}
 
 	@UseGuards(AccesTokenGuard)
-	@Patch(":id/edit-full-invoice")
+	@Patch(":invoiceId/edit-full-invoice")
 	async editFullInvoice(
 		@Request() req,
-		@Param("id") invoiceId: string,
+		@Param("invoiceId") invoiceId: string,
 		@Body() updateFullInvoice: UpdateFullInvoiceDto
 	): Promise<IInvoice> {
 		const result = await this.invoiceService.updateFullInvoice(
@@ -104,6 +110,32 @@ export class InvoiceController {
 			invoiceId: result._id,
 		});
 		return result;
+	}
+
+	@UseGuards(AccesTokenGuard)
+	@Patch(":invoiceId/toggle-status")
+	async toggleInvoiceStatus(
+		@Param("invoiceId") invoiceId: string,
+		@Body() updateInvoiceDto: UpdateInvoiceDto
+	) {
+		const invoiceObjectId = new this.ObjectId(`${invoiceId}`);
+		const userName = updateInvoiceDto.editedBy;
+		const result = await this.invoiceService.updateOne(
+			invoiceObjectId,
+			updateInvoiceDto
+		);
+		if (result) {
+			await this.historyService.create({
+				actionDescription: "Factura a fost modificata",
+				addedBy: userName,
+				invoiceId: invoiceObjectId,
+			});
+			return await this.invoiceService.findOneFullData(invoiceObjectId);
+		} else {
+			throw new BadRequestException(
+				"O eroare neprevazuta a intervenit. Te rugam sa faci refresh la pagina si sa incerci din nou"
+			);
+		}
 	}
 
 	@UseGuards(AccesTokenGuard)

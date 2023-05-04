@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { IInvoice, ICreateInvoice } from '@interfaces';
+import { IInvoice, ICreateInvoice, IToggleInvoiceStatus } from '@interfaces';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
@@ -37,6 +37,16 @@ export class InvoiceService {
     return this.http.get<any>(
       environment.baseUrl + `invoices/${invoiceId}/generate-pdf`,
       { responseType: 'blob' as 'json' }
+    );
+  }
+
+  toggleStatus(
+    invoiceId: string,
+    toggleBody: IToggleInvoiceStatus
+  ): Observable<IInvoice> {
+    return this.http.patch<IInvoice>(
+      environment.baseUrl + `invoices/${invoiceId}/toggle-status`,
+      toggleBody
     );
   }
 }

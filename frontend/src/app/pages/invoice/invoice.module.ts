@@ -23,6 +23,8 @@ import { PaymentsComponent } from './components/payments/payments.component';
 import { MatTablePaymentsComponent } from './components/mat-table-payments/mat-table-payments.component';
 import { MatTableModule } from '@angular/material/table';
 import { SharedModule } from "../../shared/modules/shared.module";
+import { HistoryComponent } from './components/history/history.component';
+import { ToggleInvoiceDialogComponent } from './components/toggle-invoice-dialog/toggle-invoice-dialog.component';
 
 
 @NgModule({
@@ -32,6 +34,8 @@ import { SharedModule } from "../../shared/modules/shared.module";
         SelectContractModelComponent,
         PaymentsComponent,
         MatTablePaymentsComponent,
+        HistoryComponent,
+        ToggleInvoiceDialogComponent,
     ],
     providers: [{ provide: MAT_DATE_LOCALE, useValue: 'ro-RO' }],
     imports: [

@@ -299,13 +299,24 @@
           Plati
         </button>
         <button
-          *ngIf="currentInvoice"
+          *ngIf="currentInvoice && !currentInvoice.isCancelled"
           type="button"
           mat-raised-button
           color="accent"
+          (click)="toggleInvoiceStatus()"
           [disabled]="isAddingEditing"
         >
           Anuleaza factura
+        </button>
+        <button
+          *ngIf="currentInvoice && currentInvoice.isCancelled"
+          type="button"
+          mat-raised-button
+          color="accent"
+          (click)="toggleInvoiceStatus()"
+          [disabled]="isAddingEditing"
+        >
+          Reactiveaza factura
         </button>
         <button
           *ngIf="currentInvoice && currentUser.role.toLowerCase() === 'admin'"

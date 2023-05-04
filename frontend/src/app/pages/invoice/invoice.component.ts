@@ -47,6 +47,7 @@ import {
 } from './utils';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PaymentsComponent } from './components/payments/payments.component';
+import { HistoryComponent } from './components/history/history.component';
 
 class PreserveWhiteSpace {
   constructor(private quill: any, private options: {}) {
@@ -76,6 +77,7 @@ export class InvoiceComponent implements OnInit {
   selectContractModelRef: MatDialogRef<SelectContractModelComponent>;
   confirmDialogRef: MatDialogRef<ConfirmationDialogComponent>;
   paymentsDialogRef: MatDialogRef<PaymentsComponent>;
+  historyDialogRef: MatDialogRef<HistoryComponent>;
   quillModules = quillBasicModule;
   totalRate: number = 0;
   totalVatRate: number = 0;
@@ -201,6 +203,28 @@ export class InvoiceComponent implements OnInit {
     this.isAddingEditing = true;
     this.handleDecimals(control, index);
     this.adjustTotalRatesSetTimeout();
+  }
+
+  toggleInvoiceStatus(): void {
+    this.isAddingEditing = true;
+    this.confirmDialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      disableClose: true,
+    });
+    this.confirmDialogRef.componentInstance.title = this.currentInvoice
+      .isCancelled
+      ? 'Reactiveaza Factura'
+      : 'Anuleaza Factura';
+    this.confirmDialogRef.componentInstance.content = this.currentInvoice
+      .isCancelled
+      ? 'Esti sigur ca doresti sa reactivezi aceasta factura?'
+      : 'Esti sigur ca doresti sa anulezi aceasta factura?';
+    this.confirmDialogRef.afterClosed().subscribe((res) => {
+      if (res) {
+        this.changeInvoiceStatus();
+      } else {
+        this.isAddingEditing = false;
+      }
+    });
   }
 
   viewContract(): void {
@@ -636,6 +660,34 @@ export class InvoiceComponent implements OnInit {
   private getHistoryActions(): void {
     this.historyService
       .getAllOfInvoice(this.currentInvoice._id)
+      .pipe(take(1))
+      .subscribe({
+        next: (historyActions) => {
+          this.historyActions = historyActions;
+          this.historyDialogRef = this.dialog.open(HistoryComponent, {
+            disableClose: true,
+          });
+          this.historyDialogRef.componentInstance.currentInvoice =
+            this.currentInvoice;
+          this.historyDialogRef.componentInstance.historyActions =
+            this.historyActions;
+          this.historyDialogRef.afterClosed().subscribe((res) => {
+            this.isAddingEditing = false;
+          });
+        },
+        error: (err) => {
+          this.notificationService.error(err.error.message);
+          this.isAddingEditing = false;
+        },
+      });
+  }
+
+  private changeInvoiceStatus(): void {
+    this.invoiceService
+      .toggleStatus(this.currentInvoice._id, {
+        isCancelled: !this.currentInvoice.isCancelled,
+        editedBy: this.currentUser.firstName + ' ' + this.currentUser.lastName,
+      })
       .pipe(
         take(1),
         finalize(() => {
@@ -643,12 +695,18 @@ export class InvoiceComponent implements OnInit {
         })
       )
       .subscribe({
-        next: (historyActions) => {
-          this.historyActions = historyActions;
-          // to do: open a dialog sending historyActions and display them in that dialog
+        next: (invoice) => {
+          this.currentInvoice = invoice;
+          if (this.currentInvoice.buyer.CUI) {
+            this.doesInvoiceBelongsToCompany = true;
+          } else {
+            this.doesInvoiceBelongsToCompany = false;
+          }
+          this.getContractModels();
         },
         error: (err) => {
           this.notificationService.error(err.error.message);
+          this.isAddingEditing = false;
         },
       });
   }

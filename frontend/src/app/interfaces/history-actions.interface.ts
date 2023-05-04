@@ -3,7 +3,7 @@ export interface IHistoryAction {
   actionDescription: string;
   addedBy: string;
   invoiceId?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
   __v?: number;
 }
