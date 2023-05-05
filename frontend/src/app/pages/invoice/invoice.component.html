@@ -312,7 +312,7 @@
           *ngIf="currentInvoice && currentInvoice.isCancelled"
           type="button"
           mat-raised-button
-          color="accent"
+          color="primary"
           (click)="toggleInvoiceStatus()"
           [disabled]="isAddingEditing"
         >
@@ -323,6 +323,7 @@
           type="button"
           mat-raised-button
           color="accent"
+          (click)="deleteInvoice()"
           [disabled]="isAddingEditing"
         >
           Sterge Factura

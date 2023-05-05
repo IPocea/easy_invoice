@@ -88,4 +88,19 @@ export class ContractService {
 			return null;
 		}
 	}
+
+	async deleteOneByInvoiceId(
+		invoiceId: Types.ObjectId
+	): Promise<IMessageResponse> {
+		try {
+			await this.contractModel.deleteOne({
+				invoiceId: invoiceId,
+			});
+			return {
+				message: "Contractul a fost sters cu succes",
+			};
+		} catch (error) {
+			return null;
+		}
+	}
 }

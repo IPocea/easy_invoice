@@ -24,6 +24,7 @@ import { ContractModule } from "src/contract/contract.module";
 import { ContractService } from "src/contract/contract.service";
 import {
 	VerifyInvoiceCreate,
+	VerifyInvoiceDelete,
 	VerifyInvoiceToggleStatus,
 	VerifyInvoiceUpdate,
 } from "./middleware";
@@ -65,11 +66,19 @@ export class InvoiceModule {
 			path: "invoices/:invoiceId/edit-full-invoice",
 			method: RequestMethod.PATCH,
 		});
-		consumer
-			.apply(VerifyInvoiceToggleStatus)
-			.forRoutes({
-				path: "invoices/:invoiceId/toggle-status",
-				method: RequestMethod.PATCH,
-			});
+		consumer.apply(VerifyInvoiceToggleStatus).forRoutes({
+			path: "invoices/:invoiceId/toggle-status",
+			method: RequestMethod.PATCH,
+		});
+		consumer.apply(VerifyInvoiceDelete).forRoutes(
+			{
+				path: "invoices/:invoiceId/delete-from-invoice",
+				method: RequestMethod.DELETE,
+			},
+			{
+				path: "invoices/:invoiceId/delete-from-table",
+				method: RequestMethod.DELETE,
+			}
+		);
 	}
 }

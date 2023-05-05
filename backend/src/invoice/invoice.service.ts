@@ -17,6 +17,7 @@ import { getFullInvoicePagination } from "./utils/invoice-pagination";
 import { getSglInvoiceAggrArray } from "./utils/single-invoice-aggregation-array";
 import { ContractService } from "src/contract/contract.service";
 import { multiply } from "src/utils/shared-operators";
+import { PaymentService } from "src/payment/payment.service";
 
 @Injectable()
 export class InvoiceService {
@@ -26,7 +27,8 @@ export class InvoiceService {
 		private readonly buyerService: BuyerService,
 		private readonly sellerService: SellerService,
 		private readonly contractService: ContractService,
-		private readonly productService: ProductService
+		private readonly productService: ProductService,
+		private readonly paymentService: PaymentService
 	) {}
 
 	async findAllFullInvoice(query: IQueryParams) {
@@ -48,7 +50,7 @@ export class InvoiceService {
 			// you need to save the result first and then use result[0] otherwhise
 			// [0] it will not wait for await and go undefined
 			const result = await this.invoiceModel.aggregate(aggArray);
-			return result[0];
+			return result[0] ? result[0] : null;
 		} catch (error) {
 			return null;
 		}
@@ -162,16 +164,14 @@ export class InvoiceService {
 	}
 
 	async deleteFullInvoice(
-		invoiceId: Types.ObjectId,
-		buyerId: Types.ObjectId,
-		sellerId: Types.ObjectId,
-		contractId: Types.ObjectId
+		invoiceId: Types.ObjectId
 	): Promise<IMessageResponse> {
 		try {
 			await this.productService.deleteManyByInvoiceId(invoiceId);
-			await this.buyerService.deleteOne(buyerId);
-			await this.sellerService.deleteOne(sellerId);
-			await this.contractService.deleteOne(contractId);
+			await this.buyerService.deleteOneByInvoiceId(invoiceId);
+			await this.sellerService.deleteOneByInvoiceId(invoiceId);
+			await this.contractService.deleteOneByInvoiceId(invoiceId);
+			await this.paymentService.deleteManyByInvoiceId(invoiceId);
 			const result = await this.deleteOne(invoiceId);
 			if (result) {
 				return result;

@@ -95,7 +95,7 @@ export class BuyerService {
 				invoiceId: invoiceId,
 			});
 			return {
-				message: `Cumparatorul cu id-ul ${invoiceId.toString()} a fost sters`,
+				message: `Cumparatorul a fost sters`,
 			};
 		} catch (error) {
 			return null;

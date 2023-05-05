@@ -73,4 +73,19 @@ export class SellerService {
 			return null;
 		}
 	}
+
+	async deleteOneByInvoiceId(
+		invoiceId: Types.ObjectId
+	): Promise<IMessageResponse> {
+		try {
+			await this.sellerModel.deleteOne({
+				invoiceId: invoiceId,
+			});
+			return {
+				message: `Vanzatorul a fost sters`,
+			};
+		} catch (error) {
+			return null;
+		}
+	}
 }

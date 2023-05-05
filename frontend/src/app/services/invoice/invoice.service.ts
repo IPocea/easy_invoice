@@ -1,6 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { IInvoice, ICreateInvoice, IToggleInvoiceStatus } from '@interfaces';
+import {
+  IInvoice,
+  ICreateInvoice,
+  IToggleInvoiceStatus,
+  IEditDeleteResponse,
+  IInvoicePagination,
+} from '@interfaces';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
@@ -47,6 +53,18 @@ export class InvoiceService {
     return this.http.patch<IInvoice>(
       environment.baseUrl + `invoices/${invoiceId}/toggle-status`,
       toggleBody
+    );
+  }
+
+  deleteFromInvoice(invoiceId: string): Observable<IEditDeleteResponse> {
+    return this.http.delete<IEditDeleteResponse>(
+      environment.baseUrl + `invoices/${invoiceId}/delete-from-invoice`
+    );
+  }
+
+  deleteFromTable(invoiceId: string): Observable<IInvoicePagination> {
+    return this.http.delete<IInvoicePagination>(
+      environment.baseUrl + `invoices/${invoiceId}/delete-from-table`
     );
   }
 }

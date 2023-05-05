@@ -9,6 +9,7 @@ import {
 	Patch,
 	Post,
 	Query,
+	Req,
 	Request,
 	Res,
 	UseGuards,
@@ -37,6 +38,7 @@ import {
 	getTotalVatHelper,
 	getVatOfProductHelper,
 } from "./handlebars-helpers/helpers";
+import { checkAdminRole } from "src/users/helpers/check-admin-role";
 
 @Controller("invoices")
 export class InvoiceController {
@@ -125,8 +127,11 @@ export class InvoiceController {
 			updateInvoiceDto
 		);
 		if (result) {
+			const actionDescription: string = updateInvoiceDto.isCancelled
+				? "Factura a fost anulata"
+				: "Factura a fost reactivata";
 			await this.historyService.create({
-				actionDescription: "Factura a fost modificata",
+				actionDescription: actionDescription,
 				addedBy: userName,
 				invoiceId: invoiceObjectId,
 			});
@@ -139,24 +144,15 @@ export class InvoiceController {
 	}
 
 	@UseGuards(AccesTokenGuard)
-	@Delete("from-table/:invoiceId/:buyerId/:sellerId/:contractId")
+	@Delete(":invoiceId/delete-from-table")
 	async deleteOneFromTable(
 		@Param("invoiceId") invoiceIdString: string,
-		@Param("buyerId") buyerIdString: string,
-		@Param("sellerId") sellerIdString: string,
-		@Param("contractId") contractIdString: string,
-		@Query() query: IQueryParams
+		@Query() query: IQueryParams,
+		@Req() req
 	): Promise<IInvoicePagination> {
+		checkAdminRole(req.user.role);
 		const invoiceId = new this.ObjectId(`${invoiceIdString}`);
-		const buyerId = new this.ObjectId(`${buyerIdString}`);
-		const sellerId = new this.ObjectId(`${sellerIdString}`);
-		const contractId = new this.ObjectId(`${contractIdString}`);
-		const result = await this.invoiceService.deleteFullInvoice(
-			invoiceId,
-			buyerId,
-			sellerId,
-			contractId
-		);
+		const result = await this.invoiceService.deleteFullInvoice(invoiceId);
 		if (!result)
 			throw new NotFoundException(
 				`Nu am putut sterge factura cu id-ul ${invoiceId.toString()}. Poate ca aceasta persoana factura nu exista`
@@ -166,23 +162,14 @@ export class InvoiceController {
 	}
 
 	@UseGuards(AccesTokenGuard)
-	@Delete("from-invoice/:invoiceId/:buyerId/:sellerId/:contractId")
+	@Delete(":invoiceId/delete-from-invoice")
 	async deleteOne(
 		@Param("invoiceId") invoiceIdString: string,
-		@Param("buyerId") buyerIdString: string,
-		@Param("sellerId") sellerIdString: string,
-		@Param("contractId") contractIdString: string
+		@Req() req
 	): Promise<IMessageResponse> {
+		checkAdminRole(req.user.role);
 		const invoiceId = new this.ObjectId(`${invoiceIdString}`);
-		const buyerId = new this.ObjectId(`${buyerIdString}`);
-		const sellerId = new this.ObjectId(`${sellerIdString}`);
-		const contractId = new this.ObjectId(`${contractIdString}`);
-		const result = await this.invoiceService.deleteFullInvoice(
-			invoiceId,
-			buyerId,
-			sellerId,
-			contractId
-		);
+		const result = await this.invoiceService.deleteFullInvoice(invoiceId);
 		if (!result)
 			throw new NotFoundException(
 				`Nu am putut sterge factura cu id-ul ${invoiceId.toString()}. Poate ca aceasta persoana factura nu exista`

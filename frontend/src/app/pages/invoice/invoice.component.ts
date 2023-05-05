@@ -24,7 +24,7 @@ import {
   TokenService,
 } from '@services';
 import { quillBasicModule } from '@utils/quill-module';
-import { IInvoice } from 'interfaces/invoice.interface';
+import { IInvoice, IToggleInvoiceStatus } from 'interfaces/invoice.interface';
 import Quill from 'quill';
 import { finalize, take } from 'rxjs';
 import { AddChangeBuyerComponent } from './components/add-change-buyer/add-change-buyer.component';
@@ -48,6 +48,7 @@ import {
 import { HttpErrorResponse } from '@angular/common/http';
 import { PaymentsComponent } from './components/payments/payments.component';
 import { HistoryComponent } from './components/history/history.component';
+import { ToggleInvoiceDialogComponent } from './components/toggle-invoice-dialog/toggle-invoice-dialog.component';
 
 class PreserveWhiteSpace {
   constructor(private quill: any, private options: {}) {
@@ -78,6 +79,7 @@ export class InvoiceComponent implements OnInit {
   confirmDialogRef: MatDialogRef<ConfirmationDialogComponent>;
   paymentsDialogRef: MatDialogRef<PaymentsComponent>;
   historyDialogRef: MatDialogRef<HistoryComponent>;
+  toggleInvoiceStatusRef: MatDialogRef<ToggleInvoiceDialogComponent>;
   quillModules = quillBasicModule;
   totalRate: number = 0;
   totalVatRate: number = 0;
@@ -207,20 +209,29 @@ export class InvoiceComponent implements OnInit {
 
   toggleInvoiceStatus(): void {
     this.isAddingEditing = true;
-    this.confirmDialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      disableClose: true,
-    });
-    this.confirmDialogRef.componentInstance.title = this.currentInvoice
+    this.toggleInvoiceStatusRef = this.dialog.open(
+      ToggleInvoiceDialogComponent,
+      {
+        disableClose: true,
+      }
+    );
+    this.toggleInvoiceStatusRef.componentInstance.title = this.currentInvoice
       .isCancelled
       ? 'Reactiveaza Factura'
       : 'Anuleaza Factura';
-    this.confirmDialogRef.componentInstance.content = this.currentInvoice
+    this.toggleInvoiceStatusRef.componentInstance.content = this.currentInvoice
       .isCancelled
       ? 'Esti sigur ca doresti sa reactivezi aceasta factura?'
       : 'Esti sigur ca doresti sa anulezi aceasta factura?';
-    this.confirmDialogRef.afterClosed().subscribe((res) => {
+    this.toggleInvoiceStatusRef.componentInstance.isCancelled =
+      this.currentInvoice.isCancelled;
+    this.toggleInvoiceStatusRef.componentInstance.currentUser =
+      this.currentUser;
+    this.toggleInvoiceStatusRef.componentInstance.currentInvoice =
+      this.currentInvoice;
+    this.toggleInvoiceStatusRef.afterClosed().subscribe((res) => {
       if (res) {
-        this.changeInvoiceStatus();
+        this.changeInvoiceStatus(res.toggleBody);
       } else {
         this.isAddingEditing = false;
       }
@@ -240,6 +251,23 @@ export class InvoiceComponent implements OnInit {
   viewHistory(): void {
     this.isAddingEditing = true;
     this.getHistoryActions();
+  }
+
+  deleteInvoice(): void {
+    this.isAddingEditing = true;
+    this.confirmDialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      disableClose: true,
+    });
+    this.confirmDialogRef.componentInstance.title = 'Sterge Factura';
+    this.confirmDialogRef.componentInstance.content =
+      'Esti sigur ca doresti sa stergi aceasta factura? Toate informatiile despre aceasta factura vor fi sterse (de ex. Contract, Istoric, Plati, etc.)';
+    this.confirmDialogRef.afterClosed().subscribe((res) => {
+      if (res) {
+        this.confirmAndDeleteInvoice();
+      } else {
+        this.isAddingEditing = false;
+      }
+    });
   }
 
   private handleDecimals(control: string, i: number): void {
@@ -385,11 +413,18 @@ export class InvoiceComponent implements OnInit {
       )
       .subscribe({
         next: (invoice) => {
-          this.currentInvoice = invoice;
-          if (this.currentInvoice.buyer.CUI) {
-            this.doesInvoiceBelongsToCompany = true;
+          if (invoice) {
+            this.currentInvoice = invoice;
+            if (this.currentInvoice.buyer.CUI) {
+              this.doesInvoiceBelongsToCompany = true;
+            } else {
+              this.doesInvoiceBelongsToCompany = false;
+            }
           } else {
-            this.doesInvoiceBelongsToCompany = false;
+            this.notificationService.error(
+              'Nu exista nicio factura cu id-ul introdus'
+            );
+            this.router.navigate(['factura/adauga']);
           }
         },
         error: (err) => {
@@ -682,12 +717,9 @@ export class InvoiceComponent implements OnInit {
       });
   }
 
-  private changeInvoiceStatus(): void {
+  private changeInvoiceStatus(toggleBody: IToggleInvoiceStatus): void {
     this.invoiceService
-      .toggleStatus(this.currentInvoice._id, {
-        isCancelled: !this.currentInvoice.isCancelled,
-        editedBy: this.currentUser.firstName + ' ' + this.currentUser.lastName,
-      })
+      .toggleStatus(this.currentInvoice._id, toggleBody)
       .pipe(
         take(1),
         finalize(() => {
@@ -702,11 +734,36 @@ export class InvoiceComponent implements OnInit {
           } else {
             this.doesInvoiceBelongsToCompany = false;
           }
+          this.notificationService.info(
+            this.currentInvoice.isCancelled
+              ? 'Factura a fost anulata'
+              : 'Factura a fost reactivata'
+          );
           this.getContractModels();
         },
         error: (err) => {
           this.notificationService.error(err.error.message);
           this.isAddingEditing = false;
+        },
+      });
+  }
+
+  private confirmAndDeleteInvoice(): void {
+    this.invoiceService
+      .deleteFromInvoice(this.currentInvoice._id)
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.isAddingEditing = false;
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          this.notificationService.info(res.message);
+          this.router.navigate(['factura/adauga']);
+        },
+        error: (err) => {
+          this.notificationService.error(err.error.message);
         },
       });
   }

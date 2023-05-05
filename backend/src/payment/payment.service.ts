@@ -130,7 +130,9 @@ export class PaymentService {
 		}
 	}
 
-	async deleteManyById(invoiceId: Types.ObjectId): Promise<IMessageResponse> {
+	async deleteManyByInvoiceId(
+		invoiceId: Types.ObjectId
+	): Promise<IMessageResponse> {
 		try {
 			const result = await this.paymentModel.deleteMany({
 				invoiceId: invoiceId,
