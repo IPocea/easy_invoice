@@ -43,7 +43,7 @@
           col !== 'updatedAt' &&
           col !== 'createdAt' &&
           col !== 'totalSum' &&
-          col !== 'totalPayments'
+          col !== 'totalPayment'
         "
       >
         <mat-header-cell
@@ -58,7 +58,7 @@
         </mat-cell>
       </ng-container>
 
-      <ng-container *ngIf="col === 'totalSum'">
+      <ng-container *ngIf="col === 'totalSum' || col === 'totalPayment'">
         <mat-header-cell
           *matHeaderCellDef
           mat-sort-header
@@ -67,35 +67,10 @@
           {{ col | wordSeparator }}
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
-          <small *ngIf="!row.paymentData.length">{{
-            0 | currency : "" : ""
-          }}</small>
-          <ng-container *ngIf="row.paymentData.length">
-            <small *ngFor="let item of row.paymentData">
-              <ng-container *ngIf="item[col]">{{
-                item[col] | currency : "" : ""
-              }}</ng-container>
-            </small>
-          </ng-container>
-        </mat-cell>
-      </ng-container>
-
-      <ng-container *ngIf="col === 'totalPayments'">
-        <mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header
-          [disabled]="isLoading"
-        >
-          {{ col | wordSeparator }}
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <small *ngIf="!row.paymentData.length">{{
-            0 | currency : "" : ""
-          }}</small>
-          <ng-container *ngIf="row.paymentData.length">
-            <small *ngFor="let item of row.paymentData">
-              <ng-container *ngIf="item[col]">{{
-                item[col] | currency : "" : ""
+          <ng-container>
+            <small>
+              <ng-container>{{
+                row[col] | currency : "" : ""
               }}</ng-container>
             </small>
           </ng-container>

@@ -239,22 +239,26 @@ export class MatTableCompanyComponent implements OnInit {
       const dataKeys = Object.keys(companiesPagination.data[0]);
       for (const key of [
         '_id',
-        '__v',
         'J',
         'headquarters',
         'vatRate',
         'bankAccount',
         'bank',
-        'paymentData',
+        'totalSum',
+        'totalPayment',
         'createdAt',
         'updatedAt',
         'addedBy',
         'editedBy',
       ]) {
-        dataKeys.splice(dataKeys.indexOf(key), 1);
+        if (dataKeys.indexOf(key) === -1) {
+          continue;
+        } else {
+          dataKeys.splice(dataKeys.indexOf(key), 1);
+        }
       }
       dataKeys.push('totalSum');
-      dataKeys.push('totalPayments');
+      dataKeys.push('totalPayment');
       dataKeys.push('_id');
       this.displayedColumns = dataKeys;
     } else {

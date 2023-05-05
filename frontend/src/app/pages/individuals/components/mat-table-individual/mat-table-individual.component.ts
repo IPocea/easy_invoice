@@ -239,21 +239,25 @@ export class MatTableIndividualComponent implements OnInit {
       const dataKeys = Object.keys(individualsPagination.data[0]);
       for (const key of [
         '_id',
-        '__v',
         'series',
         'headquarters',
         'bankAccount',
         'bank',
-        'paymentData',
+        'totalSum',
+        'totalPayment',
         'createdAt',
         'updatedAt',
         'addedBy',
         'editedBy',
       ]) {
-        dataKeys.splice(dataKeys.indexOf(key), 1);
+        if (dataKeys.indexOf(key) === -1) {
+          continue;
+        } else {
+          dataKeys.splice(dataKeys.indexOf(key), 1);
+        }
       }
       dataKeys.push('totalSum');
-      dataKeys.push('totalPayments');
+      dataKeys.push('totalPayment');
       dataKeys.push('_id');
       this.displayedColumns = dataKeys;
     } else {

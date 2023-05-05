@@ -11,6 +11,10 @@ export const getCompIndivPagination = async (
 	const limit: number = parseInt(query.pageSize) || 10;
 	const options = [];
 	const aggregationArray = getCompIndivAggArray(documentType);
+	// our aggregation will be unordered by updatedAt if sortDirection is false so we add it
+	if (!query.sortDirection) {
+		aggregationArray.push({ $sort: { updatedAt: -1 } });
+	}
 
 	if (query.searchValue) {
 		const dataKeys = getObjectKeys(documentType);

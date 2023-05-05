@@ -48,7 +48,7 @@ export class WordSeparatorPipe implements PipeTransform {
         return 'Editat de';
       case 'Total Sum':
         return 'Plati de incasat';
-      case 'Total Payments':
+      case 'Total Payment':
         return 'Plati incasate';
       case 'Payment Amount':
         return 'Valoare plata';  

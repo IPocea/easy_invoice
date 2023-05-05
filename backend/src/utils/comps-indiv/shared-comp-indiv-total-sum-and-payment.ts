@@ -4,77 +4,190 @@ export const getCompIndivAggArray = (documentType: string): object[] => [
 			from: "invoices",
 			localField: "_id",
 			foreignField: documentType === "company" ? "companyId" : "individualId",
-			as: "paymentData",
-			pipeline: [
-				{
-					$lookup: {
-						from: "products",
-						localField: "_id",
-						foreignField: "invoiceId",
-						as: "products",
-					},
-				},
-				{
-					$unwind: {
-						path: "$products",
-						preserveNullAndEmptyArrays: true,
-					},
-				},
-				{
-					$match: {
-						isCancelled: false,
-					},
-				},
-				{
-					$group: {
-						_id: "$_id",
-						totalSum: {
-							$sum: {
-								$multiply: ["$products.quantity", "$products.unitPrice"],
-							},
-						},
-						invoiceIds: {
-							$addToSet: "$_id",
-						},
-					},
-				},
-				{
-					$lookup: {
-						from: "payments",
-						localField: "_id",
-						foreignField: "invoiceId",
-						as: "payments",
-					},
-				},
-				{
-					$unwind: {
-						path: "$payments",
-						preserveNullAndEmptyArrays: true,
-					},
-				},
-				{
-					$group: {
-						_id: "$_id",
-						totalSum: {
-							$first: "$totalSum",
-						},
-						totalPayment: {
-							$sum: "$payments.paymentAmount",
-						},
-					},
-				},
-				{
-					$project: {
-						_id: 0,
-						totalSum: {
-							$divide: ["$totalSum", 100],
-						},
-						totalPayment: {
-							$divide: ["$totalPayment", 100],
-						},
-					},
-				},
-			],
+			as: "invoices",
 		},
+	},
+	{
+		$unwind: {
+			path: "$invoices",
+			preserveNullAndEmptyArrays: true,
+		},
+	},
+	{
+		$lookup: {
+			from: "products",
+			localField: "invoices._id",
+			foreignField: "invoiceId",
+			as: "products",
+		},
+	},
+	{
+		$lookup: {
+			from: "payments",
+			localField: "invoices._id",
+			foreignField: "invoiceId",
+			as: "payments",
+		},
+	},
+	{
+		$addFields: {
+			totalSum: {
+				$cond: {
+					if: {
+						$eq: ["$invoices.isCancelled", false],
+					},
+					then: {
+						$divide: [
+							{
+								$sum: {
+									$map: {
+										input: "$products",
+										as: "p",
+										in: {
+											$multiply: ["$$p.quantity", "$$p.unitPrice"],
+										},
+									},
+								},
+							},
+							100,
+						],
+					},
+					else: 0,
+				},
+			},
+			totalPayment: {
+				$cond: {
+					if: {
+						$eq: ["$invoices.isCancelled", false],
+					},
+					then: {
+						$divide: [
+							{
+								$sum: {
+									$map: {
+										input: "$payments",
+										as: "p",
+										in: {
+											$sum: "$$p.paymentAmount",
+										},
+									},
+								},
+							},
+							100,
+						],
+					},
+					else: 0,
+				},
+			},
+		},
+	},
+	{
+		$group:
+			documentType === "company"
+				? {
+						_id: "$_id",
+						name: {
+							$first: "$name",
+						},
+						J: {
+							$first: "$J",
+						},
+						CUI: {
+							$first: "$CUI",
+						},
+						vatRate: {
+							$first: "$vatRate",
+						},
+						headquarters: {
+							$first: "$headquarters",
+						},
+						county: {
+							$first: "$county",
+						},
+						bankAccount: {
+							$first: "$bankAccount",
+						},
+						bank: {
+							$first: "$bank",
+						},
+						email: {
+							$first: "$email",
+						},
+						phone: {
+							$first: "$phone",
+						},
+						isActivated: {
+							$first: "$isActivated",
+						},
+						addedBy: {
+							$first: "$addedBy",
+						},
+						editedBy: {
+							$first: "$editedBy",
+						},
+						createdAt: {
+							$first: "$createdAt",
+						},
+						updatedAt: {
+							$first: "$updatedAt",
+						},
+						totalSum: {
+							$sum: "$totalSum",
+						},
+						totalPayment: {
+							$sum: "$totalPayment",
+						},
+				  }
+				: {
+						_id: "$_id",
+						name: {
+							$first: "$name",
+						},
+						series: {
+							$first: "$series",
+						},
+						CNP: {
+							$first: "$CNP",
+						},
+						headquarters: {
+							$first: "$headquarters",
+						},
+						county: {
+							$first: "$county",
+						},
+						bankAccount: {
+							$first: "$bankAccount",
+						},
+						bank: {
+							$first: "$bank",
+						},
+						email: {
+							$first: "$email",
+						},
+						phone: {
+							$first: "$phone",
+						},
+						isActivated: {
+							$first: "$isActivated",
+						},
+						addedBy: {
+							$first: "$addedBy",
+						},
+						editedBy: {
+							$first: "$editedBy",
+						},
+						createdAt: {
+							$first: "$createdAt",
+						},
+						updatedAt: {
+							$first: "$updatedAt",
+						},
+						totalSum: {
+							$sum: "$totalSum",
+						},
+						totalPayment: {
+							$sum: "$totalPayment",
+						},
+				  },
 	},
 ];
