@@ -6,9 +6,11 @@ import {
   IToggleInvoiceStatus,
   IEditDeleteResponse,
   IInvoicePagination,
+  ITableFilters,
 } from '@interfaces';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { setFullAvailableFilters } from '@utils/mat-table';
 
 @Injectable({
   providedIn: 'root',
@@ -62,9 +64,10 @@ export class InvoiceService {
     );
   }
 
-  deleteFromTable(invoiceId: string): Observable<IInvoicePagination> {
+  deleteFromTable(invoiceId: string, filters: ITableFilters): Observable<IInvoicePagination> {
+    const filtersString = filters ? setFullAvailableFilters(filters) : '';
     return this.http.delete<IInvoicePagination>(
-      environment.baseUrl + `invoices/${invoiceId}/delete-from-table`
+      environment.baseUrl + `invoices/${invoiceId}/delete-from-table${filtersString}`
     );
   }
 }

@@ -1,0 +1,167 @@
+<div class="table-header">
+  <mat-form-field>
+    <input
+      matInput
+      (keyup)="applySearchFilter()"
+      (keydown)="clearTimeout()"
+      placeholder="Cautare..."
+      [(ngModel)]="searchValue"
+    />
+    <button
+      [ngClass]="!searchValue ? 'hidden' : ''"
+      matSuffix
+      mat-icon-button
+      aria-label="Clear"
+      (click)="clearSearchValue()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
+
+<div class="table-container mat-elevation-z8">
+  <mat-table
+    [dataSource]="dataSource"
+    matSort
+    (matSortChange)="sortData($event)"
+  >
+    <ng-container *ngFor="let col of displayedColumns" [matColumnDef]="col">
+      <ng-container
+        *ngIf="
+          col !== '_id' &&
+          col !== 'role' &&
+          col !== 'isActivated' &&
+          col !== 'updatedAt' &&
+          col !== 'createdAt' &&
+          col !== 'totalSum' &&
+          col !== 'totalPayment'
+        "
+      >
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          [disabled]="isLoading"
+        >
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <small>{{ row[col] }}</small>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container *ngIf="col === 'totalSum' || col === 'totalPayment'">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          [disabled]="isLoading"
+        >
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <ng-container>
+            <small>
+              <ng-container>{{
+                row[col] | currency : "" : ""
+              }}</ng-container>
+            </small>
+          </ng-container>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container *ngIf="col === 'role'">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          [disabled]="isLoading"
+        >
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <small
+            [ngClass]="row.role === 'admin' ? 'text-primary' : 'text-success'"
+            >{{ row[col] }}</small
+          >
+        </mat-cell>
+      </ng-container>
+      <ng-container *ngIf="col === 'isActivated'">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          [disabled]="isLoading"
+        >
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <small
+            [ngClass]="row.isActivated ? 'text-success' : 'text-danger'"
+            *ngIf="col === 'isActivated'"
+            >{{ row[col] ? "Activ" : "Inactiv" }}</small
+          >
+        </mat-cell>
+      </ng-container>
+      <ng-container *ngIf="col === '_id'">
+        <mat-header-cell *matHeaderCellDef> Actiuni </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <button
+            matTooltip="Vizualizeaza factura"
+            [disabled]="isLoading"
+          >
+            <mat-icon> visibility </mat-icon>
+          </button>
+          <button
+            matTooltip="Editeaza factura"
+            [disabled]="isLoading"
+            
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            *ngIf="currentUser.role === 'admin'"
+            matTooltip="Sterge factura"
+            (click)="deleteInvoice(row[col])"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+      <ng-container *ngIf="col === 'updatedAt'">
+        <mat-header-cell *matHeaderCellDef>
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <small *ngIf="row.createdAt === row.updatedAt">Nemodificat</small>
+          <small *ngIf="row.createdAt !== row.updatedAt">
+            {{ row.updatedAt | customDate }}
+          </small>
+        </mat-cell>
+      </ng-container>
+      <ng-container *ngIf="col === 'createdAt'">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          [disabled]="isLoading"
+        >
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <small>
+            {{ row.createdAt | customDate }}
+          </small>
+        </mat-cell>
+      </ng-container>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"> </mat-row>
+  </mat-table>
+</div>
+
+<mat-paginator
+  [pageSize]="pageSize"
+  [pageIndex]="pageIndex"
+  [pageSizeOptions]="pageSizeOptions"
+  [length]="length"
+  [showFirstLastButtons]="showFirstLastButtons"
+  (page)="handlePageChange($event)"
+  [disabled]="isLoading"
+></mat-paginator>
