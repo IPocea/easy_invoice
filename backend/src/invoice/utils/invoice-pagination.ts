@@ -43,7 +43,7 @@ export const getFullInvoicePagination = async (
 		}
 	} else {
 		options.push({
-			$sort: { updatedAt: -1 },
+			$sort: { createdAt: -1 },
 		});
 	}
 

@@ -11,15 +11,16 @@ import {
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import {
-  IInvoice,
-  IInvoicePagination,
+  IContract,
+  IContractPagination,
   ITableFilters,
   ITokens,
   IUser,
 } from '@interfaces';
 import {
-  InvoiceService,
+  ContractService,
   LoginDataService,
   NotificationService,
   StorageService,
@@ -29,15 +30,14 @@ import { ConfirmationDialogComponent } from '@shared/components/confirmation-dia
 import { environment } from '../../../../../environments/environment';
 import { finalize, take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-mat-table-invoices',
-  templateUrl: './mat-table-invoices.component.html',
-  styleUrls: ['./mat-table-invoices.component.scss'],
+  selector: 'app-mat-table-contracts',
+  templateUrl: './mat-table-contracts.component.html',
+  styleUrls: ['./mat-table-contracts.component.scss'],
 })
-export class MatTableInvoicesComponent implements OnInit {
-  @Input() invoicesPagination: IInvoicePagination;
+export class MatTableContractsComponent implements OnInit {
+  @Input() contractsPagination: IContractPagination;
   @Output() sendFilters = new EventEmitter<ITableFilters>();
   @ViewChild(MatSort) sort: MatSort;
   isLoading: boolean = false;
@@ -49,7 +49,7 @@ export class MatTableInvoicesComponent implements OnInit {
   searchValue: string = '';
   typingTimer: ReturnType<typeof setTimeout>;
   typingInt: number = 350;
-  dataSource = new MatTableDataSource<IInvoice>();
+  dataSource = new MatTableDataSource<IContract>();
   displayedColumns = [];
   confirmDialogRef: MatDialogRef<ConfirmationDialogComponent>;
   filters: ITableFilters = null;
@@ -58,7 +58,7 @@ export class MatTableInvoicesComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     private notificationService: NotificationService,
-    private invoiceService: InvoiceService,
+    private contractService: ContractService,
     private loginData: LoginDataService,
     private storageService: StorageService,
     private tokenService: TokenService,
@@ -68,13 +68,12 @@ export class MatTableInvoicesComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.loginData.getLoggedUser();
-    const data = { ...this.invoicesPagination };
+    const data = { ...this.contractsPagination };
     this.checkIfDataAndUpdate(data);
-    // Assign the data to the data source for the table to render
-    this.dataSource = new MatTableDataSource<any>(this.invoicesPagination.data);
-    this.setPaginator(this.invoicesPagination);
-    // in order to sort by letter and not let Capital letters to less points on compare
-    // we need on string to make all lower case
+    this.dataSource = new MatTableDataSource<any>(
+      this.contractsPagination.data
+    );
+    this.setPaginator(this.contractsPagination);
     this.dataSource.sortingDataAccessor = (
       data: any,
       sortHeaderId: string
@@ -87,10 +86,10 @@ export class MatTableInvoicesComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChange): void {
-    const data = { ...this.invoicesPagination };
+    const data = { ...this.contractsPagination };
     this.checkIfDataAndUpdate(data);
-    this.setPaginator(this.invoicesPagination);
-    this.dataSource.data = changes['invoicesPagination'].currentValue.data;
+    this.setPaginator(this.contractsPagination);
+    this.dataSource.data = changes['contractsPagination'].currentValue.data;
     this.isLoading = false;
   }
 
@@ -113,11 +112,6 @@ export class MatTableInvoicesComponent implements OnInit {
   clearSearchValue(): void {
     this.searchValue = '';
     this.searchByValue();
-  }
-
-  deleteInvoice(invoiceId: string): void {
-    this.isLoading = true;
-    this.confirmAndDelete(invoiceId);
   }
 
   handlePageChange(ev: any): void {
@@ -158,58 +152,25 @@ export class MatTableInvoicesComponent implements OnInit {
     this.sendFilters.emit(fitlers);
   }
 
-  viewInvoice(invoiceId: string): void {
+  viewContract(contractId: string): void {
     this.isLoading = true;
-    this.refreshToken(invoiceId);
+    this.refreshToken(contractId);
   }
 
-  private confirmAndDelete(invoiceId: string): void {
-    this.confirmDialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      disableClose: true,
-    });
-    this.confirmDialogRef.componentInstance.title = 'Sterge Factura';
-    this.confirmDialogRef.componentInstance.content =
-      'Esti sigur ca doresti sa stergi aceasta factura? Toate informatiile despre aceasta factura vor fi sterse (de ex. Contract, Istoric, Plati, etc.)';
-    this.confirmDialogRef.afterClosed().subscribe((res) => {
-      if (res) {
-        this.removeItem(invoiceId);
-      } else {
-        this.isLoading = false;
-      }
-    });
-  }
-
-  // to do, change backend code so the returned code will be only fields you need
-
-  private checkIfDataAndUpdate(invoicesPagination: IInvoicePagination): void {
-    if (invoicesPagination?.data.length) {
+  private checkIfDataAndUpdate(contractsPagination: IContractPagination): void {
+    if (contractsPagination?.data.length) {
       this.displayedColumns = [
         'date',
         'buyer',
-        'typeOfInvoice',
-        'series',
         'number',
-        'isCancelled',
         'totalCost',
-        'totalPayments',
-        'paymentStatus',
         'addedBy',
         'createdAt',
         '_id',
       ];
     } else {
-      this.displayedColumns = ['Nicio factura identificata'];
+      this.displayedColumns = ['Niciun contract identificat'];
     }
-  }
-
-  private paginateAfterUpdate(
-    invoicesData: IInvoicePagination,
-    message: string
-  ): void {
-    this.checkIfDataAndUpdate(invoicesData);
-    this.setPaginator(invoicesData);
-    this.dataSource.data = invoicesData.data;
-    this.notificationService.info(message);
   }
 
   private searchByValue(): void {
@@ -222,14 +183,13 @@ export class MatTableInvoicesComponent implements OnInit {
     if (this.searchValue.trim()) {
       this.filters.searchValue = this.searchValue.trim();
     }
-    console.log(this.filters)
     this.requestFilteredData(this.filters);
   }
 
-  private setPaginator(invoicesPagination: IInvoicePagination): void {
-    this.pageIndex = invoicesPagination.pageIndex;
-    this.pageSize = invoicesPagination.pageSize;
-    this.length = invoicesPagination.totalItems;
+  private setPaginator(contractsPagination: IContractPagination): void {
+    this.pageIndex = contractsPagination.pageIndex;
+    this.pageSize = contractsPagination.pageSize;
+    this.length = contractsPagination.totalItems;
     this.pageSizeOptions = environment.pageSizeOptions;
   }
 
@@ -246,26 +206,7 @@ export class MatTableInvoicesComponent implements OnInit {
     this.filters = null;
   }
 
-  private removeItem(invoiceId: string): void {
-    this.invoiceService
-      .deleteFromTable(invoiceId, this.filters)
-      .pipe(
-        take(1),
-        finalize(() => {
-          this.isLoading = false;
-        })
-      )
-      .subscribe({
-        next: (invoiceData) => {
-          this.paginateAfterUpdate(invoiceData, 'Factura a fost stearsa');
-        },
-        error: (err) => {
-          this.notificationService.error(err.error.message);
-        },
-      });
-  }
-
-  private refreshToken(invoiceId: string): void {
+  private refreshToken(contractId: string): void {
     const tokens: ITokens = this.storageService.getItem('tokens') as ITokens;
     this.tokenService
       .useRefreshToken(tokens.refreshToken)
@@ -273,7 +214,7 @@ export class MatTableInvoicesComponent implements OnInit {
       .subscribe({
         next: (tokens) => {
           this.storageService.setItem('tokens', tokens);
-          this.generateInvoicePdf(invoiceId);
+          this.generateContractPdf(contractId);
         },
         error: (err) => {
           if (
@@ -294,9 +235,9 @@ export class MatTableInvoicesComponent implements OnInit {
       });
   }
 
-  private generateInvoicePdf(invoiceId: string): void {
-    this.invoiceService
-      .getInvoiceAsPdf(invoiceId)
+  private generateContractPdf(contractId: string): void {
+    this.contractService
+      .getContractAsPdf(contractId)
       .pipe(
         take(1),
         finalize(() => {

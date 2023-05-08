@@ -296,6 +296,13 @@ export class InvoiceComponent implements OnInit {
     }
   }
 
+  saveSeriesLocally(): void {
+    this.storageService.setItem(
+      'invoice-series',
+      this.addEditInvoiceForm.value.invoice.series
+    );
+  }
+
   private adjustTotalRatesSetTimeout(): void {
     setTimeout(() => {
       this.adjustTotalRates();
@@ -332,7 +339,6 @@ export class InvoiceComponent implements OnInit {
         next: (myCompany) => {
           this.myCompany = myCompany[0];
           if (params.toLowerCase() === 'adauga') {
-            this.currentInvoice = null;
             this.historyActions = [];
             this.getContractModels();
           } else {
@@ -350,6 +356,7 @@ export class InvoiceComponent implements OnInit {
 
   private getParams(): void {
     this.route.params.subscribe((params) => {
+      this.currentInvoice = null;
       this.getMyCompany(params['id']);
     });
   }
@@ -532,6 +539,9 @@ export class InvoiceComponent implements OnInit {
   }
 
   private setForm(): void {
+    const invoiceSeries = this.storageService.getItem(
+      'invoice-series'
+    ) as string;
     const existingProducts: FormGroup[] = this.getExistingProducts(
       this.currentInvoice ? this.currentInvoice.products : []
     );
@@ -542,8 +552,10 @@ export class InvoiceComponent implements OnInit {
       this.selectedContractModel,
       this.currentUser,
       this.myCompany,
-      existingProducts
+      existingProducts,
+      invoiceSeries
     );
+    this.addEditInvoiceForm.updateValueAndValidity();
   }
 
   private setBuyerForm(buyer: IBuyer): void {

@@ -7,7 +7,7 @@
   <h4>{{ individual.name }}</h4>
 </header>
 <main mat-dialog-content>
-  <form [formGroup]="viewIndividualForm" autocomplete="off">
+  <form [formGroup]="viewIndividualForm" autocomplete="off" readonly>
     <input type="text" name="email" style="display: none" />
     <input type="password" style="display: none" />
     <input type="email" style="display: none" />

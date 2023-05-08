@@ -4,7 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'wordSeparator',
 })
 export class WordSeparatorPipe implements PipeTransform {
-  transform(value: string): string {
+  transform(value: string, arg: string = 'masculin'): string {
     const pattern = /[A-Z]/g;
     let newValue: string;
     if (pattern.test(value)) {
@@ -12,6 +12,9 @@ export class WordSeparatorPipe implements PipeTransform {
       newValue = newValue.slice(0, 1).toUpperCase() + newValue.slice(1);
     } else {
       newValue = value.slice(0, 1).toUpperCase() + value.slice(1).toLowerCase();
+    }
+    if (arg === 'feminin') {
+      newValue = newValue + ' F';
     }
     switch (newValue) {
       case 'Role':
@@ -24,8 +27,12 @@ export class WordSeparatorPipe implements PipeTransform {
         return 'Status';
       case 'Created At':
         return 'Creat la';
+      case 'Created At F':
+        return 'Creata la';
       case 'Updated At':
         return 'Actualizat la';
+      case 'Updated At F':
+        return 'Actualizata la';
       case 'Name':
         return 'Nume';
       case 'J':
@@ -46,12 +53,34 @@ export class WordSeparatorPipe implements PipeTransform {
         return 'Adaugat de';
       case 'Edited By':
         return 'Editat de';
+      case 'Added By F':
+        return 'Adaugata de';
+      case 'Edited By F':
+        return 'Editata de';
       case 'Total Sum':
         return 'Plati de incasat';
       case 'Total Payment':
         return 'Plati incasate';
+      case 'Total Payments':
+        return 'Plati';
       case 'Payment Amount':
-        return 'Valoare plata';  
+        return 'Valoare plata';
+      case 'Total Cost':
+        return 'Valoare totala';
+      case 'Payment Status':
+        return 'Status plata';
+      case 'Type Of Invoice':
+        return 'Tipul facturii';
+      case 'Is Cancelled':
+        return 'Status factura';
+      case 'Date':
+        return 'Data';
+      case 'Series':
+        return 'Serie';
+      case 'Number':
+        return 'Numar';
+      case 'Buyer':
+        return 'Cumparator';
       default:
         return newValue;
     }

@@ -11,9 +11,7 @@ export interface IContractPagination {
 export interface IContract {
 	_id?: Types.ObjectId;
 	number: string;
-	// date: Date;
 	subjectOfContract: string;
-	// valueOfContract: number;
 	paymentAdvance: number;
 	restOfPayment: string;
 	transport: string;

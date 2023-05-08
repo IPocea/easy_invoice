@@ -8,18 +8,10 @@ export const contractsAggregationArray: object[] = [
 			pipeline: [
 				{
 					$lookup: {
-						from: "companies",
-						localField: "companyId",
-						foreignField: "_id",
-						as: "company",
-					},
-				},
-				{
-					$lookup: {
-						from: "individuals",
-						localField: "individualId",
-						foreignField: "_id",
-						as: "individual",
+						from: "buyers",
+						localField: "_id",
+						foreignField: "invoiceId",
+						as: "buyer",
 					},
 				},
 				{
@@ -54,7 +46,44 @@ export const contractsAggregationArray: object[] = [
 	},
 	{
 		$project: {
-			"invoice.products": 0,
+			_id: 1,
+			number: 1,
+			createdAt: 1,
+			addedBy: 1,
+			invoice: {
+				$arrayElemAt: ["$invoice", 0],
+			},
+		},
+	},
+	{
+		$project: {
+			_id: 1,
+			number: 1,
+			createdAt: 1,
+			addedBy: 1,
+			invoice: {
+				$mergeObjects: [
+					"$invoice",
+					{
+						buyer: {
+							$arrayElemAt: ["$invoice.buyer", 0],
+						},
+					},
+				],
+			},
+		},
+	},
+	{
+		$project: {
+			_id: 1,
+			number: 1,
+			createdAt: 1,
+			addedBy: 1,
+			invoice: {
+				date: 1,
+				buyer: 1,		
+				totalCost: 1,
+			}
 		},
 	},
 ];

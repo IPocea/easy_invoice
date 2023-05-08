@@ -1,5 +1,6 @@
-@use 'src/styles/mixins.scss' as mixins;
+@use "src/styles/mixins.scss" as mixins;
 
 :host {
   @include mixins.add-form();
+  @include mixins.form-read-only();
 }

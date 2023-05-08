@@ -2,4 +2,5 @@
 
 :host {
   @include mixins.add-form();
+  @include mixins.form-read-only();
 }

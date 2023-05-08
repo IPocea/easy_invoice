@@ -9,7 +9,8 @@ export const setFormFunc = (
   selectedContractModel: IContractModel,
   currentUser: IUser,
   myCompany: IMyCompany,
-  existingProducts: FormGroup[]
+  existingProducts: FormGroup[],
+  invoiceSeries: string
 ): FormGroup => {
   let editedBy = '';
   if (currentInvoice) {
@@ -29,7 +30,7 @@ export const setFormFunc = (
             [Validators.required],
           ],
           series: [
-            currentInvoice ? currentInvoice.series : null,
+            currentInvoice ? currentInvoice.series : invoiceSeries,
             [Validators.required],
           ],
           number: [
@@ -71,7 +72,7 @@ export const setFormFunc = (
             [Validators.required],
           ],
           series: [
-            currentInvoice ? currentInvoice.series : null,
+            currentInvoice ? currentInvoice.series : invoiceSeries,
             [Validators.required],
           ],
           number: [
@@ -79,7 +80,7 @@ export const setFormFunc = (
             [Validators.required],
           ],
           date: [
-            currentInvoice ? currentInvoice.date : null,
+            currentInvoice ? currentInvoice.date : new Date(),
             [Validators.required],
           ],
           numberOfAccompanyingNotice: [
@@ -133,7 +134,6 @@ export const setFormFunc = (
             currentInvoice ? currentInvoice.buyer.bankAccount : null,
           ],
           bank: [currentInvoice ? currentInvoice.buyer.bank : null],
-          // _id: [currentInvoice ? currentInvoice.buyer._id : null],
         })
       : fb.group({
           name: [
@@ -160,7 +160,6 @@ export const setFormFunc = (
             currentInvoice ? currentInvoice.buyer.bankAccount : null,
           ],
           bank: [currentInvoice ? currentInvoice.buyer.bank : null],
-          // _id: [currentInvoice ? currentInvoice.buyer._id : null],
         }),
     seller: fb.group({
       name: [myCompany.name, [Validators.required]],

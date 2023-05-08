@@ -24,6 +24,13 @@ export class InvoiceService {
     );
   }
 
+  getAll(filters: ITableFilters): Observable<IInvoicePagination> {
+    const filtersString = filters ? setFullAvailableFilters(filters) : '';
+    return this.http.get<IInvoicePagination>(
+      environment.baseUrl + `invoices${filtersString}`
+    );
+  }
+
   create(createInvoiceBody: ICreateInvoice): Observable<IInvoice> {
     return this.http.post<IInvoice>(
       environment.baseUrl + 'invoices/add',
@@ -64,10 +71,14 @@ export class InvoiceService {
     );
   }
 
-  deleteFromTable(invoiceId: string, filters: ITableFilters): Observable<IInvoicePagination> {
+  deleteFromTable(
+    invoiceId: string,
+    filters: ITableFilters
+  ): Observable<IInvoicePagination> {
     const filtersString = filters ? setFullAvailableFilters(filters) : '';
     return this.http.delete<IInvoicePagination>(
-      environment.baseUrl + `invoices/${invoiceId}/delete-from-table${filtersString}`
+      environment.baseUrl +
+        `invoices/${invoiceId}/delete-from-table${filtersString}`
     );
   }
 }

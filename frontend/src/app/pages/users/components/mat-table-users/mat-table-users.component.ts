@@ -83,10 +83,6 @@ export class MatTableUsersComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
-  getEventValue($event: any): string {
-    return ($event.target as HTMLInputElement).value;
-  }
-
   // on keyup we clear timeout and start a timeout with our search filters
   // on keydown we clear timeout
   // when user stop typing, after 350 ms, the call is made to database

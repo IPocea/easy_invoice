@@ -10,9 +10,7 @@ export interface IContractPagination {
 export interface IContract {
   _id?: string;
 	number: string;
-	// date: string;
 	subjectOfContract: string;
-	// valueOfContract: number;
 	paymentAdvance: number;
 	restOfPayment: string;
 	transport: string;

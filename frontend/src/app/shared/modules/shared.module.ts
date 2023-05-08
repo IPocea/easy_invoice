@@ -14,7 +14,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
-import { MatTableComponent } from '@shared/components/mat-table/mat-table.component';
 import { ConfirmationDialogComponent } from '@shared/components/confirmation-dialog/confirmation-dialog.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PdfGeneratorComponent } from '../components/pdf-generator/pdf-generator.component';
@@ -42,7 +41,6 @@ import { QuillModule } from 'ngx-quill';
     SideNavComponent,
     CustomDatePipe,
     CustomCurrencyPipe,
-    MatTableComponent,
     WordSeparatorPipe,
     ConfirmationDialogComponent,
     UserInitialsPipe,
@@ -55,7 +53,6 @@ import { QuillModule } from 'ngx-quill';
     SideNavComponent,
     CustomDatePipe,
     CustomCurrencyPipe,
-    MatTableComponent,
     WordSeparatorPipe,
     ConfirmationDialogComponent,
     UserInitialsPipe,

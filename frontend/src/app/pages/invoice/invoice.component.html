@@ -70,6 +70,7 @@
           matInput
           formControlName="series"
           autocomplete="off"
+          (blur)="saveSeriesLocally()"
         />
         <mat-error
           *ngIf="addEditInvoiceForm.get('invoice.series').hasError('required')"

@@ -10,7 +10,6 @@ import { take } from 'rxjs';
 })
 export class IndividualsComponent implements OnInit {
   isLoading: boolean = false;
-  isEditingOrDeleting: boolean = false;
   individualsPagination: IIndividualPagination = null;
   defaultFilters: ITableFilters = {
     pageIndex: '0',

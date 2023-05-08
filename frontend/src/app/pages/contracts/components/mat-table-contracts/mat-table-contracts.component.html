@@ -26,91 +26,6 @@
     (matSortChange)="sortData($event)"
   >
     <ng-container *ngFor="let col of displayedColumns" [matColumnDef]="col">
-      <ng-container
-        *ngIf="
-          col !== '_id' &&
-          col !== 'isCancelled' &&
-          col !== 'updatedAt' &&
-          col !== 'createdAt' &&
-          col !== 'totalCost' &&
-          col !== 'totalPayments' &&
-          col !== 'paymentStatus' &&
-          col !== 'date' &&
-          col !== 'buyer' &&
-          col !== 'addedBy'
-        "
-      >
-        <mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header
-          [disabled]="isLoading"
-        >
-          {{ col | wordSeparator }}
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <small>{{ row[col] }}</small>
-        </mat-cell>
-      </ng-container>
-
-      <ng-container *ngIf="col === 'addedBy'">
-        <mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header
-          [disabled]="isLoading"
-        >
-          {{ col | wordSeparator : "feminin" }}
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <small>{{ row[col] }}</small>
-        </mat-cell>
-      </ng-container>
-
-      <ng-container *ngIf="col === 'totalCost' || col === 'totalPayments'">
-        <mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header
-          [disabled]="isLoading"
-        >
-          {{ col | wordSeparator }}
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <ng-container>
-            <small>
-              <ng-container>{{ row[col] | currency : "" : "" }}</ng-container>
-            </small>
-          </ng-container>
-        </mat-cell>
-      </ng-container>
-
-      <ng-container *ngIf="col === 'isCancelled'">
-        <mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header
-          [disabled]="isLoading"
-        >
-          {{ col | wordSeparator }}
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <small [ngClass]="row.isCancelled ? 'text-danger' : 'text-success'">{{
-            row[col] ? "Anulata" : "Activa"
-          }}</small>
-        </mat-cell>
-      </ng-container>
-      <ng-container *ngIf="col === 'paymentStatus'">
-        <mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header
-          [disabled]="isLoading"
-        >
-          {{ col | wordSeparator }}
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <small
-            [ngClass]="row.paymentStatus ? 'text-success' : 'text-danger'"
-            >{{ row[col] ? "Platita" : "Neplatita" }}</small
-          >
-        </mat-cell>
-      </ng-container>
       <ng-container *ngIf="col === 'date'">
         <mat-header-cell
           *matHeaderCellDef
@@ -120,21 +35,10 @@
           {{ col | wordSeparator }}
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
-          <small>{{ row[col] | customDate : 0 }}</small>
+          <small>{{ row["invoice"][col] | customDate : 0 }}</small>
         </mat-cell>
       </ng-container>
-      <ng-container *ngIf="col === 'createdAt'">
-        <mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header
-          [disabled]="isLoading"
-        >
-          {{ col | wordSeparator : "feminin" }}
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <small>{{ row[col] | customDate }}</small>
-        </mat-cell>
-      </ng-container>
+
       <ng-container *ngIf="col === 'buyer'">
         <mat-header-cell
           *matHeaderCellDef
@@ -144,33 +48,71 @@
           {{ col | wordSeparator }}
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
-          <small>{{ row[col]["name"] }}</small>
+          <small>{{ row["invoice"][col]["name"] }}</small>
         </mat-cell>
       </ng-container>
+
+      <ng-container *ngIf="col === 'number'">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          [disabled]="isLoading"
+        >
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <small>{{ row[col] }}</small>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container *ngIf="col === 'totalCost'">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          [disabled]="isLoading"
+        >
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <small>{{ row["invoice"][col] | currency : "" : "" }}</small>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container *ngIf="col === 'addedBy'">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          [disabled]="isLoading"
+        >
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <small>{{ row[col] }}</small>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container *ngIf="col === 'createdAt'">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          [disabled]="isLoading"
+        >
+          {{ col | wordSeparator }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <small>{{ row[col] | customDate }}</small>
+        </mat-cell>
+      </ng-container>
+
       <ng-container *ngIf="col === '_id'">
         <mat-header-cell *matHeaderCellDef> Actiuni </mat-header-cell>
         <mat-cell *matCellDef="let row">
           <button
-            matTooltip="Vizualizeaza factura"
+            matTooltip="Vizualizeaza contractul"
             [disabled]="isLoading"
-            (click)="viewInvoice(row._id)"
+            (click)="viewContract(row._id)"
           >
             <mat-icon> visibility </mat-icon>
-          </button>
-          <button
-            matTooltip="Editeaza factura"
-            [disabled]="isLoading"
-            [routerLink]="'/factura/' + row._id"
-          >
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button
-            *ngIf="currentUser.role === 'admin'"
-            matTooltip="Sterge factura"
-            [disabled]="isLoading"
-            (click)="deleteInvoice(row[col])"
-          >
-            <mat-icon>delete</mat-icon>
           </button>
         </mat-cell>
       </ng-container>

@@ -1,3 +1,5 @@
+@use "src/styles/variables.scss" as var;
+
 @mixin fullScreenCentered {
   display: flex;
   justify-content: center;
@@ -187,6 +189,20 @@
           }
         }
       }
+    }
+  }
+}
+
+@mixin form-read-only {
+  form[readonly] {
+    input,
+    mat-label {
+      color: var.$primaryLight;
+      cursor: not-allowed;
+    }
+    ::ng-deep .mat-select-value {
+      color: var.$primaryLight;
+      cursor: not-allowed;
     }
   }
 }

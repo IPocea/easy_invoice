@@ -98,10 +98,6 @@ export class MatTableIndividualComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
-  getEventValue($event: any): string {
-    return ($event.target as HTMLInputElement).value;
-  }
-
   applySearchFilter(): void {
     this.clearTimeout();
     this.typingTimer = setTimeout(
