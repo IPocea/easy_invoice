@@ -18,6 +18,13 @@ export class IndividualsService {
     );
   }
 
+  getAllActiveIndividuals(filters: ITableFilters): Observable<IIndividualPagination> {
+    const filtersString = filters ? setFullAvailableFilters(filters) : '';
+    return this.http.get<IIndividualPagination>(
+      environment.baseUrl + `individuals/actives/get-all${filtersString}`
+    );
+  }
+
   createIndividual(
     individual: IIndividual,
     filters: ITableFilters

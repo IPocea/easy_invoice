@@ -80,7 +80,9 @@ export const contractsAggregationArray: object[] = [
 			createdAt: 1,
 			addedBy: 1,
 			invoice: {
+				_id: 1,
 				date: 1,
+				number: 1,
 				buyer: 1,		
 				totalCost: 1,
 			}

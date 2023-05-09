@@ -1,7 +1,9 @@
 import { IQueryParams } from "src/utils/shared-interface";
-import { contractsAggregationArray, objectKeysOfContract } from ".";
-
-
+import {
+	contractsAggregationArray,
+	objectKeysOfContract,
+	setFrontendKeysAsBackend,
+} from ".";
 
 export const getContractPagination = async (
 	model: any,
@@ -9,15 +11,37 @@ export const getContractPagination = async (
 ): Promise<any> => {
 	const pageIndex: number = parseInt(query.pageIndex) || 0;
 	const limit: number = parseInt(query.pageSize) || 10;
-	const options = [];
+	const options = [...contractsAggregationArray];
 
 	if (query.searchValue) {
 		const dataKeys = objectKeysOfContract;
 		const orQueryArray = [];
 		for (let key of dataKeys) {
-			orQueryArray.push({
-				[`${key}`]: new RegExp(query.searchValue.toString(), "i"),
-			});
+			switch (key) {
+				case "invoice.totalCost":
+					orQueryArray.push({
+						[`${key}`]: { $eq: +query.searchValue },
+					});
+					break;
+				case "CUI/CNP":
+					orQueryArray.push({
+						[`invoice.buyer.CUI`]: new RegExp(
+							query.searchValue.toString(),
+							"i"
+						),
+					});
+					orQueryArray.push({
+						[`invoice.buyer.CNP`]: new RegExp(
+							query.searchValue.toString(),
+							"i"
+						),
+					});
+				default:
+					orQueryArray.push({
+						[`${key}`]: new RegExp(query.searchValue.toString(), "i"),
+					});
+					break;
+			}
 		}
 		options.push({
 			$match: {
@@ -34,9 +58,19 @@ export const getContractPagination = async (
 				? -1
 				: null;
 		if (sortDirection) {
-			options.push({
-				$sort: { [`${query.sortBy}`]: sortDirection },
-			});
+			const sortBy = setFrontendKeysAsBackend(query.sortBy);
+			if (sortBy === "CUI/CNP") {
+				options.push({
+					$sort: { [`invoice.buyer.CUI`]: sortDirection },
+				});
+				options.push({
+					$sort: { [`invoice.buyer.CNP`]: sortDirection },
+				});
+			} else {
+				options.push({
+					$sort: { [`${sortBy}`]: sortDirection },
+				});
+			}
 		}
 	} else {
 		options.push({
@@ -47,8 +81,7 @@ export const getContractPagination = async (
 	const optionsUntouchedBySkipLimit = [...options];
 	options.push({ $skip: pageIndex * limit });
 	options.push({ $limit: limit });
-	const finalOptions = options.concat(contractsAggregationArray);
-	const filteredData = await model.aggregate(finalOptions).exec();
+	const filteredData = await model.aggregate(options).exec();
 	const untouchedBySkipLimit = await model
 		.aggregate(optionsUntouchedBySkipLimit)
 		.exec();

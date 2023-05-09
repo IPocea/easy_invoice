@@ -160,10 +160,12 @@ export class MatTableContractsComponent implements OnInit {
   private checkIfDataAndUpdate(contractsPagination: IContractPagination): void {
     if (contractsPagination?.data.length) {
       this.displayedColumns = [
-        'date',
-        'buyer',
-        'number',
-        'totalCost',
+        'invoice.date',
+        'invoice.buyer.name',
+        'CUI/CNP',
+        'contractNumber',
+        'invoiceNumber',
+        'invoice.totalCost',
         'addedBy',
         'createdAt',
         '_id',

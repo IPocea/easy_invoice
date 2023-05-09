@@ -18,6 +18,13 @@ export class CompaniesService {
     );
   }
 
+  getAllActiveCompanies(filters: ITableFilters): Observable<ICompanyPagination> {
+    const filtersString = filters ? setFullAvailableFilters(filters) : '';
+    return this.http.get<ICompanyPagination>(
+      environment.baseUrl + `companies/actives/get-all${filtersString}`
+    );
+  }
+
   createCompany(
     company: ICompany,
     filters: ITableFilters

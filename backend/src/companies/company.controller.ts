@@ -31,6 +31,12 @@ export class CompanyController {
 	}
 
 	@UseGuards(AccesTokenGuard)
+	@Get("actives/get-all")
+	async findAllActives(@Query() query: IQueryParams): Promise<ICompanyPagination> {
+		return await this.companyService.findAllActives(query);
+	}
+
+	@UseGuards(AccesTokenGuard)
 	@Get(":id")
 	async findOne(@Param("id") companyId: string): Promise<ICompany> {
 		const ObjectId = Types.ObjectId;

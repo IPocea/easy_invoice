@@ -49,6 +49,10 @@ export class CompanyService {
 		return await getCompIndivPagination(this.companyModel, query, "company");
 	}
 
+	async findAllActives(query: IQueryParams): Promise<ICompanyPagination> {
+		return await getCompIndivPagination(this.companyModel, query, "company", true);
+	}
+
 	async findOne(query: object): Promise<ICompany> {
 		try {
 			const company = await this.companyModel.findOne(query);

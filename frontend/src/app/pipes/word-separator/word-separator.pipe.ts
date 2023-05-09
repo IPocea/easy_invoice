@@ -81,6 +81,22 @@ export class WordSeparatorPipe implements PipeTransform {
         return 'Numar';
       case 'Buyer':
         return 'Cumparator';
+      case 'Contract Number':
+        return 'Numar contract';
+      case 'Invoice Number':
+        return 'Numar factura';
+      case 'C N P':
+        return 'CNP';
+      case 'C U I':
+        return 'CUI';
+      case 'C U I/ C N P':
+        return 'CUI/CNP';
+      case 'Invoice.total Cost':
+        return 'Valoare totala';
+      case 'Invoice.date':
+        return 'Data';
+      case 'Invoice.buyer.name':
+        return 'Cumparator';  
       default:
         return newValue;
     }

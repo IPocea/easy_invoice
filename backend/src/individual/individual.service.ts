@@ -58,6 +58,15 @@ export class IndividualService {
 		);
 	}
 
+	async findAllActives(query: IQueryParams): Promise<IIndividualPagination> {
+		return await getCompIndivPagination(
+			this.individualModel,
+			query,
+			"individual",
+			true
+		);
+	}
+
 	async findOne(query: object): Promise<IIndividual> {
 		try {
 			const individual = await this.individualModel.findOne(query);

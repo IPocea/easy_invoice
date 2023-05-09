@@ -12,7 +12,7 @@ export class Buyer {
 	@Prop()
 	CUI?: string;
   @Prop()
-	CNP?: number;
+	CNP?: string;
 	@Prop()
 	series?: string;
 	@Prop({ required: true })

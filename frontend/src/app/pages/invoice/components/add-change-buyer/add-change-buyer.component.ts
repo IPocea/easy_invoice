@@ -200,7 +200,7 @@ export class AddChangeBuyerComponent implements OnInit {
 
   private searchCompanies(): void {
     this.companiesService
-      .getAllCompanies(this.filters)
+      .getAllActiveCompanies(this.filters)
       .pipe(take(1))
       .subscribe({
         next: (companies) => {
@@ -219,7 +219,7 @@ export class AddChangeBuyerComponent implements OnInit {
 
   private searchIndividuals(): void {
     this.individualsService
-      .getAllIndividuals(this.filters)
+      .getAllActiveIndividuals(this.filters)
       .pipe(take(1))
       .subscribe({
         next: (individuals) => {

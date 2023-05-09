@@ -5,24 +5,34 @@ import { getCompIndivAggArray } from "./shared-comp-indiv-total-sum-and-payment"
 export const getCompIndivPagination = async (
 	model: any,
 	query: IQueryParams,
-	documentType: string
+	documentType: string,
+	areActivesOnlyRequested?: boolean
 ): Promise<any> => {
 	const pageIndex: number = parseInt(query.pageIndex) || 0;
 	const limit: number = parseInt(query.pageSize) || 10;
-	const options = [];
 	const aggregationArray = getCompIndivAggArray(documentType);
-	// our aggregation will be unordered by updatedAt if sortDirection is false so we add it
-	if (!query.sortDirection) {
-		aggregationArray.push({ $sort: { updatedAt: -1 } });
+	const options = [...aggregationArray];
+	if (areActivesOnlyRequested) {
+		options.unshift({
+			$match: {
+				isActivated: true,
+			},
+		});
 	}
 
 	if (query.searchValue) {
 		const dataKeys = getObjectKeys(documentType);
 		const orQueryArray = [];
 		for (let key of dataKeys) {
-			orQueryArray.push({
-				[`${key}`]: new RegExp(query.searchValue.toString(), "i"),
-			});
+			if (key === "totalSum" || key === "totalPayment") {
+				orQueryArray.push({
+					[`${key}`]: { $eq: +query.searchValue },
+				});
+			} else {
+				orQueryArray.push({
+					[`${key}`]: new RegExp(query.searchValue.toString(), "i"),
+				});
+			}
 		}
 		options.push({
 			$match: {
@@ -52,8 +62,7 @@ export const getCompIndivPagination = async (
 	const optionsUntouchedBySkipLimit = [...options];
 	options.push({ $skip: pageIndex * limit });
 	options.push({ $limit: limit });
-	const finalOptions = options.concat(aggregationArray);
-	const filteredData = await model.aggregate(finalOptions).exec();
+	const filteredData = await model.aggregate(options).exec();
 	const untouchedBySkipLimit = await model
 		.aggregate(optionsUntouchedBySkipLimit)
 		.exec();

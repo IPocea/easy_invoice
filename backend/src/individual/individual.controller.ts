@@ -34,6 +34,12 @@ export class IndividualController {
 	}
 
 	@UseGuards(AccesTokenGuard)
+	@Get("actives/get-all")
+	async findAllActives(@Query() query: IQueryParams): Promise<IIndividualPagination> {
+		return await this.individualService.findAllActives(query);
+	}
+
+	@UseGuards(AccesTokenGuard)
 	@Get(":id")
 	async findOne(@Param("id") individualId: string): Promise<IIndividual> {
 		const ObjectId = mongoose.Types.ObjectId;

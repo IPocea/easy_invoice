@@ -9,6 +9,8 @@ export const getObjectKeys = (documentType: string): string[] => {
 		"isActivated",
 		"addedBy",
 		"editedBy",
+		"totalSum",
+		"totalPayment",
 	];
 	switch (documentType) {
 		case "company":

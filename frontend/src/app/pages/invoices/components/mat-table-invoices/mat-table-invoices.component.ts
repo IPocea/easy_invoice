@@ -222,7 +222,6 @@ export class MatTableInvoicesComponent implements OnInit {
     if (this.searchValue.trim()) {
       this.filters.searchValue = this.searchValue.trim();
     }
-    console.log(this.filters)
     this.requestFilteredData(this.filters);
   }
 

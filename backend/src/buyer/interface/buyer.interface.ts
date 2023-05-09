@@ -5,7 +5,7 @@ export interface IBuyer {
   name: string;
 	J?: string;
 	CUI?: string;
-	CNP?: number;
+	CNP?: string;
 	series?: string;
 	headquarters: string;
 	county: string;
