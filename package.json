@@ -2,7 +2,7 @@
 	"name": "easy-invoice",
 	"version": "1.0.0",
 	"description": "",
-	"main": "backend/dist/main",
+	"main": "dist/main.js",
 	"scripts": {
 		"start:prod": "cd backend && npm i && npm run start:prod"
 	}
