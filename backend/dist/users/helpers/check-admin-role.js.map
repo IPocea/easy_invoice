@@ -1,0 +1,1 @@
+{"version":3,"file":"check-admin-role.js","sourceRoot":"","sources":["../../../src/users/helpers/check-admin-role.ts"],"names":[],"mappings":";;;AAAA,2CAAuD;AAEvD,SAAgB,cAAc,CAAC,IAAY;IAC1C,IAAI,IAAI,KAAK,OAAO;QACnB,MAAM,IAAI,8BAAqB,CAAC,uBAAuB,CAAC,CAAC;AAC3D,CAAC;AAHD,wCAGC"}
