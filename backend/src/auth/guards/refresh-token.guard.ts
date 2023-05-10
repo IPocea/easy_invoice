@@ -1,4 +1,4 @@
-import { ForbiddenException, HttpException, Injectable } from "@nestjs/common";
+import { HttpException, Injectable } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import * as jwt from "jsonwebtoken";
 

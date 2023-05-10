@@ -9,11 +9,15 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 // import { getUsersPagination } from "./utils/get-users-pagination";
 import { IQueryParams } from "src/utils/shared-interface";
 import { getPagination } from "src/utils/shared-pagination";
+import { TokenService } from "src/token/token.service";
 
 @Injectable()
 export class UsersService {
 	private ObjectId = mongoose.Types.ObjectId;
-	constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+	constructor(
+		@InjectModel(User.name) private userModel: Model<UserDocument>,
+		private readonly tokenService: TokenService
+	) {}
 	async create(
 		newUser: CreateUserDto,
 		query: IQueryParams
@@ -89,6 +93,9 @@ export class UsersService {
 				{ _id: new this.ObjectId(`${userId}`) },
 				user
 			);
+			if (!user.isActivated) {
+				await this.tokenService.update(userId, null, "refresh");
+			}
 			return await getPagination(this.userModel, query);
 		} catch (error) {
 			return null;
@@ -105,6 +112,9 @@ export class UsersService {
 				{ _id: new this.ObjectId(`${userId}`) },
 				user
 			);
+			if (!user.isActivated) {
+				await this.tokenService.update(userId, null, "refresh");
+			}
 			return await getPagination(this.userModel, query);
 		} catch (error) {
 			return null;

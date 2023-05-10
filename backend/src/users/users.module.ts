@@ -8,13 +8,18 @@ import { VerifyUserUpdate } from "./middleware/update-user.middleware";
 import { User, UserSchema } from "./schemas/user.schema";
 import { UsersController } from "./users.controller";
 import { UsersService } from "./users.service";
+import { Token, TokenSchema } from "src/token/schemas/token.schema";
+import { TokenService } from "src/token/token.service";
 
 @Module({
 	imports: [
-		MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+		MongooseModule.forFeature([
+			{ name: User.name, schema: UserSchema },
+			{ name: Token.name, schema: TokenSchema },
+		]),
 	],
 	controllers: [UsersController],
-	providers: [UsersService, VerifyHelper],
+	providers: [UsersService, VerifyHelper, TokenService],
 })
 export class UsersModule {
 	configure(consumer: MiddlewareConsumer) {

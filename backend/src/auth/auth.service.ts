@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import { HttpException, Injectable } from "@nestjs/common";
 import { IUser } from "../users/interface/user.interface";
 import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
@@ -86,13 +86,26 @@ export class AuthService {
 			await this.tokenService.findOne({ userId: userId })
 		)?.refreshToken;
 		if (!user || !userRefreshToken) {
-			throw new ForbiddenException("Acces interzis");
+			throw new HttpException(
+				{
+					status: 498,
+					error: "Acces interzis",
+				},
+				498
+			);
 		}
 		const refreshTokenMatches = await bcrypt.compare(
 			refreshToken,
 			userRefreshToken
 		);
-		if (!refreshTokenMatches) throw new ForbiddenException("Acces interzis");
+		if (!refreshTokenMatches)
+			throw new HttpException(
+				{
+					status: 498,
+					error: "Acces interzis",
+				},
+				498
+			);
 		const tokens = await this.getTokens(
 			user._id,
 			user.username,

@@ -108,7 +108,12 @@ export class InvoiceComponent implements OnInit {
     this.getParams();
   }
 
-  addEditInvoice(): void {
+  addEditInvoice(e: Event): void {
+    e.preventDefault();
+    this.isAddingEditing = true;
+    this.addEditInvoiceBtnMessage = this.currentInvoice
+      ? 'Se editeaza...'
+      : 'Se adauga...';
     this.replaceContractVars();
     this.cleanAllForms();
     if (this.currentInvoice) {
@@ -597,6 +602,7 @@ export class InvoiceComponent implements OnInit {
         take(1),
         finalize(() => {
           this.isAddingEditing = false;
+          this.addEditInvoiceBtnMessage = 'Editeaza factura';
         })
       )
       .subscribe({
