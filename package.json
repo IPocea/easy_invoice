@@ -1,0 +1,9 @@
+{
+	"name": "easy-invoice",
+	"version": "1.0.0",
+	"description": "",
+	"main": "backend/dist/main",
+	"scripts": {
+		"start:prod": "cd backend && npm run start:prod"
+	}
+}
