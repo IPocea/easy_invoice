@@ -4,8 +4,6 @@
 	"description": "",
 	"main": "backend/dist/main",
 	"scripts": {
-		"start:prod": "cd backend && npm run start:prod",
-    "build": "cd backend && npm run build",
-    "postinstall": "cd backend && npm install && npm run build"
+		"start:prod": "cd backend && npm i && npm run start:prod"
 	}
 }
