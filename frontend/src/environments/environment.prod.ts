@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  baseUrl: 'http://localhost:3330/api/',
+  baseUrl: 'https://easy-invoice-simple.herokuapp.com/api/',
   pageSizeOptions: [10, 25, 50, 100],
   contractModels: {
     acceptedFields: [
