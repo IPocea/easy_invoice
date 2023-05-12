@@ -32,7 +32,9 @@ let AuthService = class AuthService {
             return null;
         const passwordValid = await bcrypt.compare(password, user.password);
         if (user && passwordValid) {
-            return user;
+            const userObject = user.toObject();
+            delete userObject.password;
+            return userObject;
         }
         return null;
     }

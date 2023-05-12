@@ -18,7 +18,7 @@ export class AuthService {
 
 	async validateUser(username: string, password: string): Promise<IUser> {
 		// search user by case-insensitive username
-		const user = await this.usersService.findOne({
+		const user: any = await this.usersService.findOne({
 			username: {
 				$regex: new RegExp("^" + username.toLowerCase() + "$", "i"),
 			},
@@ -26,7 +26,9 @@ export class AuthService {
 		if (!user) return null;
 		const passwordValid = await bcrypt.compare(password, user.password);
 		if (user && passwordValid) {
-			return user;
+			const userObject: IUser = user.toObject();
+			delete userObject.password;
+			return userObject;
 		}
 		return null;
 	}
