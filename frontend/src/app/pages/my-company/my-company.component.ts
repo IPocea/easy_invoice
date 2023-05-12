@@ -90,6 +90,7 @@ export class MyCompanyComponent implements OnInit {
       .pipe(
         take(1),
         finalize(() => {
+          this.editMyCompanyBtnMessage = 'Editeaza datele firmei';
           this.isEditing = false;
         })
       )
