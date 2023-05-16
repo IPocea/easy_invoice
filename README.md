@@ -12,7 +12,7 @@ All of your data will be easily managed on Angular Mat Tables.
 
 - run `npm i` in both frontend and backend folder
 - in backend foldr write an .env file with the below keys:
-  - `mongoDB` - the link with the mongoDB database
+  - `mongoDB` - the link with the mongoDB database. You should create an user with admin role directly in database, with the keys you will find in users/dto/create-user.dto.ts file
   - `accessTokenSecret` - secret for access token
   - `refreshTokenSecret` - secret for refresh token
   - `resetTokenSecret` - secret for reset token
@@ -25,5 +25,7 @@ All of your data will be easily managed on Angular Mat Tables.
   - `MAIL_FROM` - mail from
 - run `npm run start:dev` on backend folder
 - run `ng serve -o` on frontend folder
+
+### Check more details in readme files from folders frontend and backend
 
 #### Enjoy

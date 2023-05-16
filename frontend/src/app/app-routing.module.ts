@@ -5,12 +5,6 @@ import { AdminGuard, NonAuth, AuthGuard } from '@guards';
 
 const routes: Routes = [
   {
-    path: 'acasa',
-    loadChildren: () =>
-      import('./pages/home/home.module').then((m) => m.HomeModule),
-    canActivate: [AuthGuard],
-  },
-  {
     path: 'societati',
     loadChildren: () =>
       import('./pages/companies/companies.module').then(
