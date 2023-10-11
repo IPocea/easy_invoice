@@ -1,0 +1,1 @@
+//# sourceMappingURL=individual.model.js.map
